@@ -1,0 +1,75 @@
+run:
+    skip-dirs:
+        - bin
+        - static
+        - third_party
+        - tests
+    skip-dirs-use-default: true
+    timeout: 5m
+linters:
+  disable:
+    - gochecknoglobals
+    - funlen
+    # 1.22+
+    - wsl
+    - godox
+    - gocognit
+    - nolintlint
+    - testpackage
+    - noctx
+    - nlreturn
+    - gosimple
+    - gomnd
+    - goerr113
+    - exhaustive
+    - nestif
+    - stylecheck
+    - godot
+    - gofumpt
+    - whitespace
+    - unparam
+    - gci
+    - gochecknoinits
+  enable:
+    - asciicheck
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goheader
+    - goimports
+    - golint
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - govet
+    - ineffassign
+    - interfacer
+    - lll
+    - misspell
+    - prealloc
+    - rowserrcheck
+    - scopelint
+    - sqlclosecheck
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unconvert
+    - unused
+    - varcheck
+
+linters-settings:
+    govet:            # 对于linter govet，我们手动开启了它的某些扫描规则
+        check-shadowing: true
+        check-unreachable: true
+        check-rangeloops: true
+        check-copylocks: true
+    lll:
+        line-length: 140
