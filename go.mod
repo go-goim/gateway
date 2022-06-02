@@ -14,11 +14,11 @@ require (
 	google.golang.org/grpc v1.47.0
 )
 
-
 replace (
 	github.com/go-goim/api => ../api
 	github.com/go-goim/core => ../core
 )
+
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
@@ -101,3 +101,5 @@ require (
 	gorm.io/gorm v1.23.4 // indirect
 	stathat.com/c/consistent v1.0.0 // indirect
 )
+
+replace github.com/tidwall/gjson v1.2.1 => github.com/tidwall/gjson v1.13.0
