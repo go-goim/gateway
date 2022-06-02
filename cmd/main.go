@@ -1,23 +1,25 @@
-package main
+package cmd
 
 import (
 	"context"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	messagev1 "github.com/go-goim/api/message/v1"
 	"github.com/go-goim/core/pkg/cmd"
 	"github.com/go-goim/core/pkg/graceful"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/mid"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/go-goim/gateway/internal/app"
 	"github.com/go-goim/gateway/internal/router"
 	"github.com/go-goim/gateway/internal/service"
 
-	_ "github.com/go-goim/core/swagger"
 	_ "github.com/swaggo/swag"
+
+	_ "github.com/go-goim/gateway/docs"
 )
 
 var (
@@ -28,7 +30,7 @@ func init() {
 	cmd.GlobalFlagSet.StringVar(&jwtSecret, "jwt-secret", "", "jwt secret")
 }
 
-func main() {
+func Main() {
 	if err := cmd.ParseFlags(); err != nil {
 		panic(err)
 	}
