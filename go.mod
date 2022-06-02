@@ -14,6 +14,11 @@ require (
 	google.golang.org/grpc v1.47.0
 )
 
+
+replace (
+	github.com/go-goim/api => ../api
+	github.com/go-goim/core => ../core
+)
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
