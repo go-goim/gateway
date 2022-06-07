@@ -8,4 +8,4 @@ configCenter:
   format: yaml # yaml, json
   paths:
     - common
-    - gateway
+    - goim.service.gateway

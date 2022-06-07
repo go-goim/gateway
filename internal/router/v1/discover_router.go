@@ -28,11 +28,11 @@ func (r *DiscoverRouter) Load(g *gin.RouterGroup) {
 }
 
 // @Summary 获取推送服务器
-// @Description 获取推送服务器 agentID
+// @Description 获取推送服务器 IP
 // @Tags [gateway]discover
 // @Produce  json
 // @Param   token query string true "token"
-// @Success 200 {object} response.Response
+// @Success 200 {object} {"server_ip": "0.0.0.0"}
 // @Failure 200 {object} response.Response
 // @Failure 401 {null} null
 // @Router /gateway/v1/discovery/discover [get]
@@ -43,13 +43,13 @@ func (r *DiscoverRouter) handleDiscoverPushServer(c *gin.Context) {
 		return
 	}
 
-	agentID, err := service.LoadMatchedPushServer(context.Background())
+	serverIP, err := service.LoadMatchedPushServer(context.Background())
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
 	}
 
 	response.SuccessResp(c, gin.H{
-		"agentID": agentID,
+		"server_ip": serverIP,
 	})
 }

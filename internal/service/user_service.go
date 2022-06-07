@@ -97,18 +97,23 @@ func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (
 		return nil, responsepb.Code_InvalidUsernameOrPassword.BaseResponse()
 	}
 
-	agentID, err := s.userDao.GetUserOnlineAgent(ctx, user.GetUid())
+	agentIP, err := s.userDao.GetUserOnlineAgent(ctx, user.GetUid())
 	if err != nil {
 		return nil, err
 	}
 
-	if len(agentID) == 0 {
+	if len(agentIP) == 0 {
 		// not login
 		user.LoginStatus = userv1.LoginStatus_LOGIN
+		agentIP, err = LoadMatchedPushServer(ctx)
+		if err != nil {
+			return nil, err
+		}
+		user.PushServerIp = &agentIP
 	} else {
 		// already login
 		user.LoginStatus = userv1.LoginStatus_ALREADY_LOGIN
-		user.AgentId = &agentID
+		user.PushServerIp = &agentIP
 	}
 
 	return user.ToUser(), nil

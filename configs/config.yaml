@@ -1,4 +1,4 @@
-name: service.goim.gateway
+name: goim.service.gateway
 version: v0.0.0
 http:
   scheme: http

@@ -5,8 +5,8 @@ SHELL:=/usr/bin/env bash
 Srv = service.goim.gateway
 BinPath = bin/$(Srv)
 CfgPath = configs
-IMAGE ?= goim/$(Srv)
-VERSION ?= $(shell git describe --exact-match --tags 2> /dev/null || git rev-parse --abbrev-ref HEAD)
+IMAGE = goim/$(Srv)
+VERSION = $(shell git describe --exact-match --tags 2> /dev/null || git rev-parse --abbrev-ref HEAD)
 
 ## env
 export ROCKETMQ_GO_LOG_LEVEL=warn
@@ -15,7 +15,7 @@ export ROCKETMQ_GO_LOG_LEVEL=warn
 export JWT_SECRET="goim"
 
 ## enable config center
-export ENABLE_CONFIG_CENTER=false
+export ENABLE_CONFIG_CENTER=true
 
 ##################################################
 # Development                                    #
