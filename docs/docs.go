@@ -27,7 +27,7 @@ const docTemplate = `{
     "paths": {
         "/gateway/v1/discovery/discover": {
             "get": {
-                "description": "获取推送服务器 agentID",
+                "description": "获取推送服务器 IP",
                 "produces": [
                     "application/json"
                 ],
@@ -46,13 +46,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "errCode",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "type": "null"
                         }
@@ -194,7 +194,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/accept-friend": {
+        "/gateway/v1/user/friend/accept": {
             "post": {
                 "description": "接受好友请求",
                 "consumes": [
@@ -241,7 +241,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/add-friend": {
+        "/gateway/v1/user/friend/add": {
             "post": {
                 "description": "添加好友",
                 "consumes": [
@@ -288,7 +288,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/block-friend": {
+        "/gateway/v1/user/friend/block": {
             "post": {
                 "description": "屏蔽好友",
                 "consumes": [
@@ -335,7 +335,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/delete-friend": {
+        "/gateway/v1/user/friend/delete": {
             "post": {
                 "description": "删除好友",
                 "consumes": [
@@ -385,9 +385,6 @@ const docTemplate = `{
         "/gateway/v1/user/friend/list": {
             "get": {
                 "description": "获取好友列表",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -435,7 +432,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/reject-friend": {
+        "/gateway/v1/user/friend/reject": {
             "post": {
                 "description": "拒绝好友请求",
                 "consumes": [
@@ -482,7 +479,42 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/unblock-friend": {
+        "/gateway/v1/user/friend/request/list": {
+            "get": {
+                "description": "获取好友请求列表",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[gateway]好友"
+                ],
+                "summary": "获取好友请求列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "err",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/v1/user/friend/unblock": {
             "post": {
                 "description": "取消屏蔽好友",
                 "consumes": [
@@ -999,11 +1031,11 @@ const docTemplate = `{
         "v1.User": {
             "type": "object",
             "properties": {
-                "agent_id": {
-                    "description": "AgentID only valid when user already login.",
+                "avatar": {
                     "type": "string"
                 },
-                "avatar": {
+                "connect_url": {
+                    "description": "ws_url is url of user need connect via ws or tcp",
                     "type": "string"
                 },
                 "email": {

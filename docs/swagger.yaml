@@ -207,10 +207,10 @@ definitions:
     type: object
   v1.User:
     properties:
-      agent_id:
-        description: AgentID only valid when user already login.
-        type: string
       avatar:
+        type: string
+      connect_url:
+        description: ws_url is url of user need connect via ws or tcp
         type: string
       email:
         type: string
@@ -241,7 +241,7 @@ info:
 paths:
   /gateway/v1/discovery/discover:
     get:
-      description: 获取推送服务器 agentID
+      description: 获取推送服务器 IP
       parameters:
       - description: token
         in: query
@@ -252,11 +252,11 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: errCode
           schema:
             $ref: '#/definitions/response.Response'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             type: "null"
       summary: 获取推送服务器
@@ -350,7 +350,7 @@ paths:
       summary: 查询离线消息
       tags:
       - '[gateway]offline_message'
-  /gateway/v1/user/friend/accept-friend:
+  /gateway/v1/user/friend/accept:
     post:
       consumes:
       - application/json
@@ -381,7 +381,7 @@ paths:
       summary: 接受好友请求
       tags:
       - '[gateway]好友'
-  /gateway/v1/user/friend/add-friend:
+  /gateway/v1/user/friend/add:
     post:
       consumes:
       - application/json
@@ -412,7 +412,7 @@ paths:
       summary: 添加好友
       tags:
       - '[gateway]好友'
-  /gateway/v1/user/friend/block-friend:
+  /gateway/v1/user/friend/block:
     post:
       consumes:
       - application/json
@@ -443,7 +443,7 @@ paths:
       summary: 屏蔽好友
       tags:
       - '[gateway]好友'
-  /gateway/v1/user/friend/delete-friend:
+  /gateway/v1/user/friend/delete:
     post:
       consumes:
       - application/json
@@ -476,8 +476,6 @@ paths:
       - '[gateway]好友'
   /gateway/v1/user/friend/list:
     get:
-      consumes:
-      - application/json
       description: 获取好友列表
       parameters:
       - description: token
@@ -506,7 +504,7 @@ paths:
       summary: 获取好友列表
       tags:
       - '[gateway]好友'
-  /gateway/v1/user/friend/reject-friend:
+  /gateway/v1/user/friend/reject:
     post:
       consumes:
       - application/json
@@ -537,7 +535,30 @@ paths:
       summary: 拒绝好友请求
       tags:
       - '[gateway]好友'
-  /gateway/v1/user/friend/unblock-friend:
+  /gateway/v1/user/friend/request/list:
+    get:
+      description: 获取好友请求列表
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: err
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取好友请求列表
+      tags:
+      - '[gateway]好友'
+  /gateway/v1/user/friend/unblock:
     post:
       consumes:
       - application/json

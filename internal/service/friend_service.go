@@ -32,6 +32,10 @@ func GetUserRelationService() *FriendService {
 	return userRelationService
 }
 
+/*
+ * Friend Request Logic
+ */
+
 func (s *FriendService) AddFriend(ctx context.Context, req *friendpb.AddFriendRequest) (*friendpb.AddFriendResult, error) {
 	err := s.checkGrpcConn(ctx)
 	if err != nil {
@@ -50,24 +54,23 @@ func (s *FriendService) AddFriend(ctx context.Context, req *friendpb.AddFriendRe
 	return rsp.GetResult(), nil
 }
 
-func (s *FriendService) ListUserRelation(ctx context.Context, req *friendpb.QueryFriendListRequest) (
-	[]*friendpb.Friend, error) {
-
+func (s *FriendService) QueryFriendRequestList(ctx context.Context, req *friendpb.QueryFriendRequestListRequest) (
+	[]*friendpb.FriendRequest, error) {
 	err := s.checkGrpcConn(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	rsp, err := friendpb.NewFriendServiceClient(s.friendServiceConn).QueryFriendList(ctx, req)
+	rsp, err := friendpb.NewFriendServiceClient(s.friendServiceConn).QueryFriendRequestList(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	if rsp.Response.Success() {
-		return rsp.GetFriendList(), nil
+	if !rsp.Response.Success() {
+		return nil, rsp.GetResponse()
 	}
 
-	return nil, rsp.GetResponse()
+	return rsp.GetFriendRequestList(), nil
 }
 
 func (s *FriendService) AcceptFriend(ctx context.Context, req *friendpb.ConfirmFriendRequestReq) error {
@@ -102,6 +105,30 @@ func (s *FriendService) confirmFriendRequest(ctx context.Context, req *friendpb.
 	}
 
 	return nil
+}
+
+/*
+ * Friend Logic
+ */
+
+func (s *FriendService) ListUserRelation(ctx context.Context, req *friendpb.QueryFriendListRequest) (
+	[]*friendpb.Friend, error) {
+
+	err := s.checkGrpcConn(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	rsp, err := friendpb.NewFriendServiceClient(s.friendServiceConn).QueryFriendList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	if rsp.Response.Success() {
+		return rsp.GetFriendList(), nil
+	}
+
+	return nil, rsp.GetResponse()
 }
 
 func (s *FriendService) BlockFriend(ctx context.Context, req *friendpb.BaseFriendRequest) error {

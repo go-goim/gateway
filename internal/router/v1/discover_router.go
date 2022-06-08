@@ -32,9 +32,9 @@ func (r *DiscoverRouter) Load(g *gin.RouterGroup) {
 // @Tags [gateway]discover
 // @Produce  json
 // @Param   token query string true "token"
-// @Success 200 {object} {"server_ip": "0.0.0.0"}
-// @Failure 200 {object} response.Response
-// @Failure 401 {null} null
+// @Success 200 {string} string "success"
+// @Failure 200 {object} response.Response "errCode"
+// @Failure 401 {null} null "unauthorized"
 // @Router /gateway/v1/discovery/discover [get]
 func (r *DiscoverRouter) handleDiscoverPushServer(c *gin.Context) {
 	uid := c.GetString("uid")
