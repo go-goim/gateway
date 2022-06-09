@@ -160,7 +160,7 @@ func (s *SendMessageService) sendMessage(ctx context.Context, mm *messagev1.MqMe
 		return rsp, nil
 	}
 
-	log.Info(rs.String())
+	log.Info("send message success", "rs", rs)
 	rsp.MsgSeq = rs.MsgID
 
 	return rsp, nil
