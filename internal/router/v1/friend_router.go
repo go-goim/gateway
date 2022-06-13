@@ -53,7 +53,7 @@ func (r *FriendRouter) listRelation(c *gin.Context) {
 		Uid: uid,
 	}
 
-	list, err := service.GetUserRelationService().ListUserRelation(mid.GetContext(c), req)
+	list, err := service.GetFriendService().ListUserRelation(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
@@ -83,7 +83,7 @@ func (r *FriendRouter) listFriendRequest(c *gin.Context) {
 	}
 	req.Status = friendpb.FriendRequestStatus(status)
 
-	list, err := service.GetUserRelationService().QueryFriendRequestList(mid.GetContext(c), req)
+	list, err := service.GetFriendService().QueryFriendRequestList(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
@@ -116,7 +116,7 @@ func (r *FriendRouter) addFriend(c *gin.Context) {
 		return
 	}
 
-	result, err := service.GetUserRelationService().AddFriend(mid.GetContext(c), req)
+	result, err := service.GetFriendService().AddFriend(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
@@ -142,7 +142,7 @@ func (r *FriendRouter) deleteFriend(c *gin.Context) {
 		return
 	}
 
-	err := service.GetUserRelationService().DeleteFriend(mid.GetContext(c), req)
+	err := service.GetFriendService().DeleteFriend(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
@@ -170,7 +170,7 @@ func (r *FriendRouter) acceptFriend(c *gin.Context) {
 
 	req.Uid = mid.GetUID(c)
 	req.Action = friendpb.ConfirmFriendRequestAction_ACCEPT
-	err := service.GetUserRelationService().AcceptFriend(mid.GetContext(c), req)
+	err := service.GetFriendService().AcceptFriend(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
@@ -198,7 +198,7 @@ func (r *FriendRouter) rejectFriend(c *gin.Context) {
 
 	req.Action = friendpb.ConfirmFriendRequestAction_REJECT
 	req.Uid = mid.GetUID(c)
-	err := service.GetUserRelationService().RejectFriend(mid.GetContext(c), req)
+	err := service.GetFriendService().RejectFriend(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
@@ -224,7 +224,7 @@ func (r *FriendRouter) blockFriend(c *gin.Context) {
 		return
 	}
 
-	err := service.GetUserRelationService().BlockFriend(mid.GetContext(c), req)
+	err := service.GetFriendService().BlockFriend(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
@@ -250,7 +250,7 @@ func (r *FriendRouter) unblockFriend(c *gin.Context) {
 		return
 	}
 
-	err := service.GetUserRelationService().UnblockFriend(mid.GetContext(c), req)
+	err := service.GetFriendService().UnblockFriend(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return

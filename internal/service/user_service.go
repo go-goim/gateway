@@ -3,16 +3,16 @@ package service
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	ggrpc "google.golang.org/grpc"
-	"google.golang.org/grpc/connectivity"
 
 	responsepb "github.com/go-goim/api/transport/response"
 	userv1 "github.com/go-goim/api/user/v1"
-
+	cgrpc "github.com/go-goim/core/pkg/conn/grpc"
+	"github.com/go-goim/core/pkg/graceful"
+	"github.com/go-goim/core/pkg/initialize"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/util"
 
@@ -21,31 +21,32 @@ import (
 )
 
 type UserService struct {
-	userDao         *dao.UserDao
-	userServiceConn *ggrpc.ClientConn
+	userDao *dao.UserDao
+	cp      *cgrpc.ConnPool
 }
 
 var (
-	userService     *UserService
-	userServiceOnce sync.Once
+	userService = &UserService{}
 )
 
 func GetUserService() *UserService {
-	userServiceOnce.Do(func() {
-		userService = &UserService{
-			userDao: dao.GetUserDao(),
-		}
-	})
 	return userService
 }
 
+func init() {
+	initialize.Register(initialize.NewBasicInitializer("user_service", nil, func() error {
+		userService.userDao = dao.GetUserDao()
+		return userService.initConnPool()
+	}))
+}
+
 func (s *UserService) QueryUserInfo(ctx context.Context, req *userv1.QueryUserRequest) (*userv1.User, error) {
-	err := s.checkGrpcConn(ctx)
+	cc, err := s.cp.Get()
 	if err != nil {
 		return nil, err
 	}
 
-	rsp, err := userv1.NewUserServiceClient(s.userServiceConn).QueryUser(ctx, req)
+	rsp, err := userv1.NewUserServiceClient(cc).QueryUser(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +60,7 @@ func (s *UserService) QueryUserInfo(ctx context.Context, req *userv1.QueryUserRe
 
 // Login check user login status and return user info
 func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (*userv1.User, error) {
-	err := s.checkGrpcConn(ctx)
+	cc, err := s.cp.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +81,7 @@ func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (
 	}
 
 	ctx2, cancel := context.WithTimeout(ctx, 3*time.Second)
-	rsp, err := userv1.NewUserServiceClient(s.userServiceConn).QueryUser(ctx2, queryReq)
+	rsp, err := userv1.NewUserServiceClient(cc).QueryUser(ctx2, queryReq)
 	cancel()
 
 	if err != nil {
@@ -121,13 +122,13 @@ func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (
 
 // Register register user.
 func (s *UserService) Register(ctx context.Context, req *userv1.CreateUserRequest) (*userv1.User, error) {
-	err := s.checkGrpcConn(ctx)
+	cc, err := s.cp.Get()
 	if err != nil {
 		return nil, err
 	}
 
 	// do check user exist and create.
-	rsp, err := userv1.NewUserServiceClient(s.userServiceConn).CreateUser(ctx, req)
+	rsp, err := userv1.NewUserServiceClient(cc).CreateUser(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -141,13 +142,13 @@ func (s *UserService) Register(ctx context.Context, req *userv1.CreateUserReques
 
 // UpdateUser update user info.
 func (s *UserService) UpdateUser(ctx context.Context, req *userv1.UpdateUserRequest) (*userv1.User, error) {
-	err := s.checkGrpcConn(ctx)
+	cc, err := s.cp.Get()
 	if err != nil {
 		return nil, err
 	}
 
 	// do check user exist and update.
-	rsp, err := userv1.NewUserServiceClient(s.userServiceConn).UpdateUser(ctx, req)
+	rsp, err := userv1.NewUserServiceClient(cc).UpdateUser(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -159,30 +160,21 @@ func (s *UserService) UpdateUser(ctx context.Context, req *userv1.UpdateUserRequ
 	return rsp.GetUser().ToUser(), nil
 }
 
-func (s *UserService) checkGrpcConn(ctx context.Context) error {
-	if s.userServiceConn != nil {
-		switch s.userServiceConn.GetState() {
-		case connectivity.Idle:
-			return nil
-		case connectivity.Connecting:
-			return nil
-		case connectivity.Ready:
-			return nil
-		default:
-			// reconnect
-		}
-	}
-
-	var ck = fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.UserService)
-
-	cc, err := grpc.DialInsecure(ctx,
-		grpc.WithDiscovery(app.GetApplication().Register),
-		grpc.WithEndpoint(ck),
-		grpc.WithTimeout(5*time.Second))
+func (s *UserService) initConnPool() error {
+	cp, err := cgrpc.NewConnPool(cgrpc.WithInsecure(),
+		cgrpc.WithClientOption(
+			grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.UserService)),
+			grpc.WithDiscovery(app.GetApplication().Register),
+			grpc.WithTimeout(time.Second*5),
+			grpc.WithOptions(ggrpc.WithBlock()),
+		), cgrpc.WithPoolSize(2))
 	if err != nil {
 		return err
 	}
 
-	s.userServiceConn = cc
+	s.cp = cp
+	graceful.Register(func(_ context.Context) error {
+		return cp.Release()
+	})
 	return nil
 }

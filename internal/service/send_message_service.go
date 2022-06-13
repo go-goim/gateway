@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	ggrpc "google.golang.org/grpc"
-	"google.golang.org/grpc/connectivity"
 
 	responsepb "github.com/go-goim/api/transport/response"
 	friendpb "github.com/go-goim/api/user/friend/v1"
+	cgrpc "github.com/go-goim/core/pkg/conn/grpc"
+	"github.com/go-goim/core/pkg/graceful"
+	"github.com/go-goim/core/pkg/initialize"
 
 	"github.com/go-goim/core/pkg/log"
 
@@ -25,20 +26,21 @@ import (
 
 type SendMessageService struct {
 	messagev1.UnimplementedSendMessagerServer
-	friendServiceConn *ggrpc.ClientConn
+	cp *cgrpc.ConnPool
 }
 
 var (
-	sendMessageService     *SendMessageService
-	sendMessageServiceOnce sync.Once
+	sendMessageService = &SendMessageService{}
 )
 
 func GetSendMessageService() *SendMessageService {
-	sendMessageServiceOnce.Do(func() {
-		sendMessageService = new(SendMessageService)
-	})
-
 	return sendMessageService
+}
+
+func init() {
+	initialize.Register(initialize.NewBasicInitializer("send_message_service", nil, func() error {
+		return sendMessageService.initConnPool()
+	}))
 }
 
 func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.SendMessageReq) (*messagev1.SendMessageResp, error) {
@@ -71,11 +73,12 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 }
 
 func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1.SendMessageReq) error {
-	if err := s.checkFriendServiceConn(ctx); err != nil {
+	cc, err := s.cp.Get()
+	if err != nil {
 		return err
 	}
 
-	resp, err := friendpb.NewFriendServiceClient(s.friendServiceConn).IsFriend(ctx, &friendpb.BaseFriendRequest{
+	resp, err := friendpb.NewFriendServiceClient(cc).IsFriend(ctx, &friendpb.BaseFriendRequest{
 		Uid:       req.GetFromUser(),
 		FriendUid: req.GetToUser(),
 	})
@@ -90,29 +93,22 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 	return nil
 }
 
-func (s *SendMessageService) checkFriendServiceConn(ctx context.Context) error {
-	if s.friendServiceConn != nil {
-		switch s.friendServiceConn.GetState() {
-		case connectivity.Idle:
-			return nil
-		case connectivity.Connecting:
-			return nil
-		case connectivity.Ready:
-			return nil
-		default:
-			// reconnect
-		}
-	}
-
-	cc, err := grpc.DialInsecure(ctx,
-		grpc.WithDiscovery(app.GetApplication().Register),
-		grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.UserService)),
-		grpc.WithTimeout(5*time.Second))
+func (s *SendMessageService) initConnPool() error {
+	cp, err := cgrpc.NewConnPool(cgrpc.WithInsecure(),
+		cgrpc.WithClientOption(
+			grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.UserService)),
+			grpc.WithDiscovery(app.GetApplication().Register),
+			grpc.WithTimeout(time.Second*5),
+			grpc.WithOptions(ggrpc.WithBlock()),
+		), cgrpc.WithPoolSize(2))
 	if err != nil {
 		return err
 	}
 
-	s.friendServiceConn = cc
+	s.cp = cp
+	graceful.Register(func(_ context.Context) error {
+		return cp.Release()
+	})
 	return nil
 }
 

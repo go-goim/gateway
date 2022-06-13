@@ -7,31 +7,41 @@ import (
 
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	ggrpc "google.golang.org/grpc"
-	"google.golang.org/grpc/connectivity"
 
 	messagev1 "github.com/go-goim/api/message/v1"
+	cgrpc "github.com/go-goim/core/pkg/conn/grpc"
+	"github.com/go-goim/core/pkg/graceful"
+	"github.com/go-goim/core/pkg/initialize"
 
 	"github.com/go-goim/gateway/internal/app"
 )
 
 type OfflineMessageService struct {
-	msgServiceConn *ggrpc.ClientConn
+	cp *cgrpc.ConnPool
 }
 
-var offlineMsgSrc = &OfflineMessageService{}
+var (
+	offlineMsgSrc = &OfflineMessageService{}
+)
 
 func GetOfflineMessageService() *OfflineMessageService {
 	return offlineMsgSrc
 }
 
+func init() {
+	initialize.Register(initialize.NewBasicInitializer("offline_message_service", nil, func() error {
+		return offlineMsgSrc.initConnPool()
+	}))
+}
+
 func (s *OfflineMessageService) QueryOfflineMsg(ctx context.Context, req *messagev1.QueryOfflineMessageReq) (
 	[]*messagev1.BriefMessage, error) {
-	err := s.checkGrpcConn(ctx)
+	cc, err := s.cp.Get()
 	if err != nil {
 		return nil, err
 	}
 
-	rsp, err := messagev1.NewOfflineMessageClient(s.msgServiceConn).QueryOfflineMessage(ctx, req)
+	rsp, err := messagev1.NewOfflineMessageClient(cc).QueryOfflineMessage(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -43,30 +53,21 @@ func (s *OfflineMessageService) QueryOfflineMsg(ctx context.Context, req *messag
 	return rsp.GetMessages(), nil
 }
 
-func (s *OfflineMessageService) checkGrpcConn(ctx context.Context) error {
-	if s.msgServiceConn != nil {
-		switch s.msgServiceConn.GetState() {
-		case connectivity.Idle:
-			return nil
-		case connectivity.Connecting:
-			return nil
-		case connectivity.Ready:
-			return nil
-		default:
-			// reconnect
-		}
-	}
-
-	var ck = fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.MsgService)
-	cc, err := grpc.DialInsecure(ctx,
-		grpc.WithDiscovery(app.GetApplication().Register),
-		grpc.WithEndpoint(ck),
-		grpc.WithTimeout(5*time.Second),
-	)
+func (s *OfflineMessageService) initConnPool() error {
+	cp, err := cgrpc.NewConnPool(cgrpc.WithInsecure(),
+		cgrpc.WithClientOption(
+			grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.MsgService)),
+			grpc.WithDiscovery(app.GetApplication().Register),
+			grpc.WithTimeout(time.Second*5),
+			grpc.WithOptions(ggrpc.WithBlock()),
+		), cgrpc.WithPoolSize(2))
 	if err != nil {
 		return err
 	}
 
-	s.msgServiceConn = cc
+	s.cp = cp
+	graceful.Register(func(_ context.Context) error {
+		return cp.Release()
+	})
 	return nil
 }
