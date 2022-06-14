@@ -142,6 +142,7 @@ func (s *SendMessageService) Broadcast(ctx context.Context, req *messagev1.SendM
 
 func (s *SendMessageService) sendMessage(ctx context.Context, mm *messagev1.MqMessage) (*messagev1.SendMessageResp, error) {
 	rsp := new(messagev1.SendMessageResp)
+	rsp.Response = responsepb.Code_OK.BaseResponse()
 
 	b, err := json.Marshal(mm)
 	if err != nil {
