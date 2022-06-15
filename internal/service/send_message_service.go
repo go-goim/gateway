@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 
 	responsepb "github.com/go-goim/api/transport/response"
 	friendpb "github.com/go-goim/api/user/friend/v1"
+	sessionpb "github.com/go-goim/api/user/session/v1"
 	cgrpc "github.com/go-goim/core/pkg/conn/grpc"
 	"github.com/go-goim/core/pkg/graceful"
 	"github.com/go-goim/core/pkg/initialize"
@@ -47,8 +49,9 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 	rsp := new(messagev1.SendMessageResp)
 
 	// check is friend
-	if err := s.checkCanSendMsg(ctx, req); err != nil {
-		rsp.Response = responsepb.NewBaseResponseWithMessage(responsepb.Code_RelationNotExist, err.Error())
+	sid, err := s.checkCanSendMsg(ctx, req)
+	if err != nil {
+		rsp.Response = responsepb.NewBaseResponseWithError(err)
 		return nil, rsp.Response
 	}
 
@@ -58,9 +61,10 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 		PushMessageType: messagev1.PushMessageType_User,
 		ContentType:     req.GetContentType(),
 		Content:         req.GetContent(),
+		SessionId:       sid,
 	}
 
-	rsp, err := s.sendMessage(ctx, mm)
+	rsp, err = s.sendMessage(ctx, mm)
 	if err != nil {
 		return nil, err
 	}
@@ -69,28 +73,38 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 		return nil, rsp.Response
 	}
 
+	rsp.SessionId = sid
 	return rsp, nil
 }
 
-func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1.SendMessageReq) error {
+func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1.SendMessageReq) (int64, error) {
 	cc, err := s.cp.Get()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	resp, err := friendpb.NewFriendServiceClient(cc).IsFriend(ctx, &friendpb.BaseFriendRequest{
-		Uid:       req.GetFromUser(),
-		FriendUid: req.GetToUser(),
-	})
+	cr := &friendpb.CheckSendMessageAbilityRequest{
+		FromUid:     req.GetFromUser(),
+		ToUid:       req.GetToUser(),
+		SessionType: sessionpb.SessionType_SingleChat,
+	}
+
+	// todo check touid whether is a group id
+
+	resp, err := friendpb.NewFriendServiceClient(cc).CheckSendMessageAbility(ctx, cr)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	if !resp.Success() {
-		return resp
+	if !resp.Response.Success() {
+		return 0, resp.Response
 	}
 
-	return nil
+	if resp.SessionId == nil || *resp.SessionId == 0 {
+		return 0, errors.New("session id is nil")
+	}
+
+	return *resp.SessionId, nil
 }
 
 func (s *SendMessageService) initConnPool() error {
