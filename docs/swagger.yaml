@@ -48,6 +48,15 @@ definitions:
       status:
         type: integer
     type: object
+  v1.AddGroupMemberRequest:
+    properties:
+      gid:
+        type: string
+      uid:
+        items:
+          type: string
+        type: array
+    type: object
   v1.BaseFriendRequest:
     properties:
       friend_uid:
@@ -65,6 +74,8 @@ definitions:
         type: string
       msg_seq:
         type: string
+      session_id:
+        type: integer
       to_user:
         type: string
     type: object
@@ -77,6 +88,21 @@ definitions:
       uid:
         type: string
     type: object
+  v1.CreateGroupRequest:
+    properties:
+      avatar:
+        type: string
+      description:
+        type: string
+      members_uid:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      owner_uid:
+        type: string
+    type: object
   v1.CreateUserRequest:
     properties:
       name:
@@ -85,6 +111,13 @@ definitions:
         type: string
       user:
         description: "Types that are assignable to User:\n\t*CreateUserRequest_Email\n\t*CreateUserRequest_Phone"
+    type: object
+  v1.DeleteGroupRequest:
+    properties:
+      gid:
+        type: string
+      uid:
+        type: string
     type: object
   v1.Friend:
     properties:
@@ -122,6 +155,51 @@ definitions:
         type: string
       updated_at:
         type: integer
+    type: object
+  v1.Group:
+    properties:
+      avatar:
+        type: string
+      description:
+        type: string
+      gid:
+        type: string
+      id:
+        type: integer
+      max_members:
+        type: integer
+      member_count:
+        type: integer
+      members:
+        items:
+          $ref: '#/definitions/v1.GroupMember'
+        type: array
+      name:
+        type: string
+      owner:
+        $ref: '#/definitions/v1.GroupMember'
+      owner_uid:
+        type: string
+      status:
+        type: integer
+    type: object
+  v1.GroupMember:
+    properties:
+      gid:
+        type: string
+      group:
+        $ref: '#/definitions/v1.Group'
+      id:
+        description: use as session id
+        type: integer
+      status:
+        type: integer
+      type:
+        type: integer
+      uid:
+        type: string
+      user:
+        $ref: '#/definitions/v1.User'
     type: object
   v1.LoginRequestForSwagger:
     properties:
@@ -173,6 +251,17 @@ definitions:
         example: "13800138000"
         type: string
     type: object
+  v1.RemoveGroupMemberRequest:
+    properties:
+      gid:
+        type: string
+      owner_uid:
+        type: string
+      uid:
+        items:
+          type: string
+        type: array
+    type: object
   v1.SendMessageReq:
     properties:
       content:
@@ -187,10 +276,26 @@ definitions:
   v1.SendMessageResp:
     properties:
       msg_seq:
-        description: MsgSeq is unique seq of a message
         type: string
       response:
         $ref: '#/definitions/response.BaseResponse'
+      session_id:
+        description: MsgSeq is unique seq of a message
+        type: integer
+    type: object
+  v1.UpdateGroupRequest:
+    properties:
+      avatar:
+        type: string
+      description:
+        type: string
+      gid:
+        type: string
+      name:
+        type: string
+      uid:
+        description: current user id
+        type: string
     type: object
   v1.UpdateUserRequest:
     properties:
@@ -262,6 +367,240 @@ paths:
       summary: 获取推送服务器
       tags:
       - '[gateway]discover'
+  /gateway/v1/group/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建群组
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 创建群组请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/v1.Group'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 创建群组
+      tags:
+      - '[gateway]群组'
+  /gateway/v1/group/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除群组
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 删除群组请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.DeleteGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除群组
+      tags:
+      - '[gateway]群组'
+  /gateway/v1/group/get:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 获取群组信息
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 群组ID
+        in: query
+        name: g_id
+        required: true
+        type: string
+      - description: 是否获取群组成员
+        in: query
+        name: with_member
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/v1.Group'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.BaseResponse'
+      summary: 获取群组信息
+      tags:
+      - '[gateway]群组'
+  /gateway/v1/group/join:
+    post:
+      consumes:
+      - application/json
+      description: 加入群组
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 加入群组请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AddGroupMemberRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 加入群组
+      tags:
+      - '[gateway]群组'
+  /gateway/v1/group/leave:
+    post:
+      consumes:
+      - application/json
+      description: 退出群组
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 退出群组请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.RemoveGroupMemberRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 退出群组
+      tags:
+      - '[gateway]群组'
+  /gateway/v1/group/list:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 获取群组列表
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 用户ID
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/v1.Group'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取群组列表
+      tags:
+      - '[gateway]群组'
+  /gateway/v1/group/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新群组
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 更新群组请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/v1.Group'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 更新群组
+      tags:
+      - '[gateway]群组'
   /gateway/v1/message/broadcast:
     post:
       consumes:

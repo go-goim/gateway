@@ -18,6 +18,7 @@ func NewRouter() *Router {
 
 func (r *Router) Init() {
 	r.Register("/user", NewUserRouter())
+	r.Register("/group", NewGroupRouter())
 	r.Register("/message", NewMsgRouter())
 	r.Register("/discovery", NewDiscoverRouter())
 }
