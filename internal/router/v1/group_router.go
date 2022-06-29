@@ -35,7 +35,7 @@ func (r *GroupRouter) Load(router *gin.RouterGroup) {
 
 // @Summary 获取群组信息
 // @Description 获取群组信息
-// @Tags [gateway]群组
+// @Tags 群组
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param Authorization header string true "token"
@@ -43,7 +43,7 @@ func (r *GroupRouter) Load(router *gin.RouterGroup) {
 // @Param with_member query bool false "是否获取群组成员"
 // @Success 200 {object} grouppb.Group "Success"
 // @Failure 400 {object} responsepb.BaseResponse "Bad Request"
-// @Router /gateway/v1/group/get [get]
+// @Router /group/get [get]
 func (r *GroupRouter) getGroup(c *gin.Context) {
 	var req struct {
 		GroupID     string `form:"gid" binding:"required"`
@@ -68,7 +68,7 @@ func (r *GroupRouter) getGroup(c *gin.Context) {
 
 // @Summary 获取群组列表
 // @Description 获取群组列表
-// @Tags [gateway]群组
+// @Tags 群组
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param Authorization header string true "token"
@@ -77,7 +77,7 @@ func (r *GroupRouter) getGroup(c *gin.Context) {
 // @Param size query int32 false "每页数量"
 // @Success 200 {object} response.Response{data=[]grouppb.Group} "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /gateway/v1/group/list [get]
+// @Router /group/list [get]
 func (r *GroupRouter) listGroup(c *gin.Context) {
 	var req struct {
 		Uid  string `form:"uid" binding:"required"`
@@ -104,14 +104,14 @@ func (r *GroupRouter) listGroup(c *gin.Context) {
 
 // @Summary 创建群组
 // @Description 创建群组
-// @Tags [gateway]群组
+// @Tags 群组
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "token"
 // @Param body body grouppb.CreateGroupRequest true "创建群组请求"
 // @Success 200 {object} grouppb.Group "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /gateway/v1/group/create [post]
+// @Router /group/create [post]
 func (r *GroupRouter) createGroup(c *gin.Context) {
 	var req = &grouppb.CreateGroupRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
@@ -135,14 +135,14 @@ func (r *GroupRouter) createGroup(c *gin.Context) {
 
 // @Summary 更新群组
 // @Description 更新群组
-// @Tags [gateway]群组
+// @Tags 群组
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "token"
 // @Param body body grouppb.UpdateGroupRequest true "更新群组请求"
 // @Success 200 {object} grouppb.Group "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /gateway/v1/group/update [post]
+// @Router /group/update [post]
 func (r *GroupRouter) updateGroup(c *gin.Context) {
 	var req = &grouppb.UpdateGroupRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
@@ -166,14 +166,14 @@ func (r *GroupRouter) updateGroup(c *gin.Context) {
 
 // @Summary 删除群组
 // @Description 删除群组
-// @Tags [gateway]群组
+// @Tags 群组
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "token"
 // @Param body body grouppb.DeleteGroupRequest true "删除群组请求"
 // @Success 200 {object} response.Response "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /gateway/v1/group/delete [post]
+// @Router /group/delete [post]
 func (r *GroupRouter) deleteGroup(c *gin.Context) {
 	var req = &grouppb.DeleteGroupRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
@@ -197,14 +197,14 @@ func (r *GroupRouter) deleteGroup(c *gin.Context) {
 
 // @Summary 加入群组
 // @Description 加入群组
-// @Tags [gateway]群组
+// @Tags 群组
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "token"
 // @Param body body grouppb.AddGroupMemberRequest true "加入群组请求"
 // @Success 200 {object} response.Response "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /gateway/v1/group/join [post]
+// @Router /group/join [post]
 func (r *GroupRouter) joinGroup(c *gin.Context) {
 	var req = &grouppb.AddGroupMemberRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
@@ -228,14 +228,14 @@ func (r *GroupRouter) joinGroup(c *gin.Context) {
 
 // @Summary 退出群组
 // @Description 退出群组
-// @Tags [gateway]群组
+// @Tags 群组
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "token"
 // @Param body body grouppb.RemoveGroupMemberRequest true "退出群组请求"
 // @Success 200 {object} response.Response "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /gateway/v1/group/leave [post]
+// @Router /group/leave [post]
 func (r *GroupRouter) leaveGroup(c *gin.Context) {
 	var req = &grouppb.RemoveGroupMemberRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {

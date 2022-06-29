@@ -41,13 +41,13 @@ type QueryRequestForSwagger struct {
 
 // @Summary 查询用户信息
 // @Description 查询用户信息
-// @Tags [gateway]用户
+// @Tags 用户
 // @Accept json
 // @Produce json
 // @Param   req body QueryRequestForSwagger true "req"
 // @Success 200 {object} response.Response{data=userv1.User}
 // @Failure 200 {object} response.Response
-// @Router /gateway/v1/user/query [post]
+// @Router /user/query [post]
 func (r *UserRouter) queryUser(c *gin.Context) {
 	var req = &userv1.QueryUserRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
@@ -74,13 +74,13 @@ type LoginRequestForSwagger struct {
 
 // @Summary 登录
 // @Description 用户登录
-// @Tags [gateway]用户
+// @Tags 用户
 // @Accept json
 // @Produce json
 // @Param   req body LoginRequestForSwagger true "req"
 // @Success 200 {object} response.Response{data=userv1.User}
 // @Header  200 {string} Authorization "Bearer "
-// @Router /gateway/v1/user/login [post]
+// @Router /user/login [post]
 func (r *UserRouter) login(c *gin.Context) {
 	var req = &userv1.UserLoginRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
@@ -104,13 +104,13 @@ func (r *UserRouter) login(c *gin.Context) {
 
 // @Summary 注册
 // @Description 用户注册
-// @Tags [gateway]用户
+// @Tags 用户
 // @Accept json
 // @Produce json
 // @Param   req body userv1.CreateUserRequest true "req"
 // @Success 200 {object} userv1.User
 // @Failure 200 {object} response.Response
-// @Router /gateway/v1/user/register [post]
+// @Router /user/register [post]
 func (r *UserRouter) register(c *gin.Context) {
 	var req = &userv1.CreateUserRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
@@ -129,13 +129,13 @@ func (r *UserRouter) register(c *gin.Context) {
 
 // @Summary 更新用户信息
 // @Description 更新用户信息
-// @Tags [gateway]用户
+// @Tags 用户
 // @Accept json
 // @Produce json
 // @Param   req body userv1.UpdateUserRequest true "req"
 // @Success 200 {object} userv1.User
 // @Failure 200 {object} response.Response
-// @Router /gateway/v1/user/update [post]
+// @Router /user/update [post]
 func (r *UserRouter) updateUserInfo(c *gin.Context) {
 	var req = &userv1.UpdateUserRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {

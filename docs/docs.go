@@ -25,14 +25,14 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/gateway/v1/discovery/discover": {
+        "/discovery/discover": {
             "get": {
                 "description": "获取推送服务器 IP",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]discover"
+                    "discover"
                 ],
                 "summary": "获取推送服务器",
                 "parameters": [
@@ -60,7 +60,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/group/create": {
+        "/group/create": {
             "post": {
                 "description": "创建群组",
                 "consumes": [
@@ -70,7 +70,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]群组"
+                    "群组"
                 ],
                 "summary": "创建群组",
                 "parameters": [
@@ -107,7 +107,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/group/delete": {
+        "/group/delete": {
             "post": {
                 "description": "删除群组",
                 "consumes": [
@@ -117,7 +117,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]群组"
+                    "群组"
                 ],
                 "summary": "删除群组",
                 "parameters": [
@@ -154,7 +154,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/group/get": {
+        "/group/get": {
             "get": {
                 "description": "获取群组信息",
                 "consumes": [
@@ -164,7 +164,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]群组"
+                    "群组"
                 ],
                 "summary": "获取群组信息",
                 "parameters": [
@@ -205,7 +205,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/group/join": {
+        "/group/join": {
             "post": {
                 "description": "加入群组",
                 "consumes": [
@@ -215,7 +215,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]群组"
+                    "群组"
                 ],
                 "summary": "加入群组",
                 "parameters": [
@@ -252,7 +252,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/group/leave": {
+        "/group/leave": {
             "post": {
                 "description": "退出群组",
                 "consumes": [
@@ -262,7 +262,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]群组"
+                    "群组"
                 ],
                 "summary": "退出群组",
                 "parameters": [
@@ -299,7 +299,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/group/list": {
+        "/group/list": {
             "get": {
                 "description": "获取群组列表",
                 "consumes": [
@@ -309,7 +309,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]群组"
+                    "群组"
                 ],
                 "summary": "获取群组列表",
                 "parameters": [
@@ -371,7 +371,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/group/update": {
+        "/group/update": {
             "post": {
                 "description": "更新群组",
                 "consumes": [
@@ -381,7 +381,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]群组"
+                    "群组"
                 ],
                 "summary": "更新群组",
                 "parameters": [
@@ -418,7 +418,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/message/broadcast": {
+        "/message/broadcast": {
             "post": {
                 "description": "发送广播消息",
                 "consumes": [
@@ -428,7 +428,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]message"
+                    "message"
                 ],
                 "summary": "发送广播消息",
                 "parameters": [
@@ -465,7 +465,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/message/send_msg": {
+        "/message/send_msg": {
             "post": {
                 "description": "发送单聊消息",
                 "consumes": [
@@ -475,7 +475,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]message"
+                    "message"
                 ],
                 "summary": "发送单聊消息",
                 "parameters": [
@@ -512,7 +512,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/offline_message/query": {
+        "/offline_message/query": {
             "post": {
                 "description": "查询离线消息",
                 "consumes": [
@@ -522,7 +522,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]offline_message"
+                    "offline_message"
                 ],
                 "summary": "查询离线消息",
                 "parameters": [
@@ -552,7 +552,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/accept": {
+        "/user/friend/accept": {
             "post": {
                 "description": "接受好友请求",
                 "consumes": [
@@ -562,7 +562,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "接受好友请求",
                 "parameters": [
@@ -599,7 +599,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/add": {
+        "/user/friend/add": {
             "post": {
                 "description": "添加好友",
                 "consumes": [
@@ -609,7 +609,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "添加好友",
                 "parameters": [
@@ -646,7 +646,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/block": {
+        "/user/friend/block": {
             "post": {
                 "description": "屏蔽好友",
                 "consumes": [
@@ -656,7 +656,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "屏蔽好友",
                 "parameters": [
@@ -693,7 +693,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/delete": {
+        "/user/friend/delete": {
             "post": {
                 "description": "删除好友",
                 "consumes": [
@@ -703,7 +703,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "删除好友",
                 "parameters": [
@@ -740,14 +740,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/list": {
+        "/user/friend/list": {
             "get": {
                 "description": "获取好友列表",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "获取好友列表",
                 "parameters": [
@@ -790,7 +790,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/reject": {
+        "/user/friend/reject": {
             "post": {
                 "description": "拒绝好友请求",
                 "consumes": [
@@ -800,7 +800,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "拒绝好友请求",
                 "parameters": [
@@ -837,14 +837,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/request/list": {
+        "/user/friend/request/list": {
             "get": {
                 "description": "获取好友请求列表",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "获取好友请求列表",
                 "parameters": [
@@ -872,7 +872,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/unblock": {
+        "/user/friend/unblock": {
             "post": {
                 "description": "取消屏蔽好友",
                 "consumes": [
@@ -882,7 +882,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "取消屏蔽好友",
                 "parameters": [
@@ -919,7 +919,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/login": {
+        "/user/login": {
             "post": {
                 "description": "用户登录",
                 "consumes": [
@@ -929,7 +929,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]用户"
+                    "用户"
                 ],
                 "summary": "登录",
                 "parameters": [
@@ -971,7 +971,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/query": {
+        "/user/query": {
             "post": {
                 "description": "查询用户信息",
                 "consumes": [
@@ -981,7 +981,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]用户"
+                    "用户"
                 ],
                 "summary": "查询用户信息",
                 "parameters": [
@@ -1005,7 +1005,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/register": {
+        "/user/register": {
             "post": {
                 "description": "用户注册",
                 "consumes": [
@@ -1015,7 +1015,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]用户"
+                    "用户"
                 ],
                 "summary": "注册",
                 "parameters": [
@@ -1039,7 +1039,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/update": {
+        "/user/update": {
             "post": {
                 "description": "更新用户信息",
                 "consumes": [
@@ -1049,7 +1049,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]用户"
+                    "用户"
                 ],
                 "summary": "更新用户信息",
                 "parameters": [

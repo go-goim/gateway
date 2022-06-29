@@ -344,7 +344,7 @@ info:
   title: GoIM.Gateway Swagger
   version: "1.0"
 paths:
-  /gateway/v1/discovery/discover:
+  /discovery/discover:
     get:
       description: 获取推送服务器 IP
       parameters:
@@ -366,8 +366,8 @@ paths:
             type: "null"
       summary: 获取推送服务器
       tags:
-      - '[gateway]discover'
-  /gateway/v1/group/create:
+      - discover
+  /group/create:
     post:
       consumes:
       - application/json
@@ -397,8 +397,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 创建群组
       tags:
-      - '[gateway]群组'
-  /gateway/v1/group/delete:
+      - 群组
+  /group/delete:
     post:
       consumes:
       - application/json
@@ -428,8 +428,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 删除群组
       tags:
-      - '[gateway]群组'
-  /gateway/v1/group/get:
+      - 群组
+  /group/get:
     get:
       consumes:
       - application/x-www-form-urlencoded
@@ -462,8 +462,8 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
       summary: 获取群组信息
       tags:
-      - '[gateway]群组'
-  /gateway/v1/group/join:
+      - 群组
+  /group/join:
     post:
       consumes:
       - application/json
@@ -493,8 +493,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 加入群组
       tags:
-      - '[gateway]群组'
-  /gateway/v1/group/leave:
+      - 群组
+  /group/leave:
     post:
       consumes:
       - application/json
@@ -524,8 +524,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 退出群组
       tags:
-      - '[gateway]群组'
-  /gateway/v1/group/list:
+      - 群组
+  /group/list:
     get:
       consumes:
       - application/x-www-form-urlencoded
@@ -569,8 +569,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 获取群组列表
       tags:
-      - '[gateway]群组'
-  /gateway/v1/group/update:
+      - 群组
+  /group/update:
     post:
       consumes:
       - application/json
@@ -600,8 +600,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 更新群组
       tags:
-      - '[gateway]群组'
-  /gateway/v1/message/broadcast:
+      - 群组
+  /message/broadcast:
     post:
       consumes:
       - application/json
@@ -631,8 +631,8 @@ paths:
             type: "null"
       summary: 发送广播消息
       tags:
-      - '[gateway]message'
-  /gateway/v1/message/send_msg:
+      - message
+  /message/send_msg:
     post:
       consumes:
       - application/json
@@ -662,8 +662,8 @@ paths:
             type: "null"
       summary: 发送单聊消息
       tags:
-      - '[gateway]message'
-  /gateway/v1/offline_message/query:
+      - message
+  /offline_message/query:
     post:
       consumes:
       - application/json
@@ -688,8 +688,8 @@ paths:
             type: "null"
       summary: 查询离线消息
       tags:
-      - '[gateway]offline_message'
-  /gateway/v1/user/friend/accept:
+      - offline_message
+  /user/friend/accept:
     post:
       consumes:
       - application/json
@@ -719,8 +719,8 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
       summary: 接受好友请求
       tags:
-      - '[gateway]好友'
-  /gateway/v1/user/friend/add:
+      - 好友
+  /user/friend/add:
     post:
       consumes:
       - application/json
@@ -750,8 +750,8 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
       summary: 添加好友
       tags:
-      - '[gateway]好友'
-  /gateway/v1/user/friend/block:
+      - 好友
+  /user/friend/block:
     post:
       consumes:
       - application/json
@@ -781,8 +781,8 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
       summary: 屏蔽好友
       tags:
-      - '[gateway]好友'
-  /gateway/v1/user/friend/delete:
+      - 好友
+  /user/friend/delete:
     post:
       consumes:
       - application/json
@@ -812,8 +812,8 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
       summary: 删除好友
       tags:
-      - '[gateway]好友'
-  /gateway/v1/user/friend/list:
+      - 好友
+  /user/friend/list:
     get:
       description: 获取好友列表
       parameters:
@@ -842,8 +842,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 获取好友列表
       tags:
-      - '[gateway]好友'
-  /gateway/v1/user/friend/reject:
+      - 好友
+  /user/friend/reject:
     post:
       consumes:
       - application/json
@@ -873,8 +873,8 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
       summary: 拒绝好友请求
       tags:
-      - '[gateway]好友'
-  /gateway/v1/user/friend/request/list:
+      - 好友
+  /user/friend/request/list:
     get:
       description: 获取好友请求列表
       parameters:
@@ -896,8 +896,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 获取好友请求列表
       tags:
-      - '[gateway]好友'
-  /gateway/v1/user/friend/unblock:
+      - 好友
+  /user/friend/unblock:
     post:
       consumes:
       - application/json
@@ -927,8 +927,8 @@ paths:
             $ref: '#/definitions/response.BaseResponse'
       summary: 取消屏蔽好友
       tags:
-      - '[gateway]好友'
-  /gateway/v1/user/login:
+      - 好友
+  /user/login:
     post:
       consumes:
       - application/json
@@ -958,8 +958,8 @@ paths:
               type: object
       summary: 登录
       tags:
-      - '[gateway]用户'
-  /gateway/v1/user/query:
+      - 用户
+  /user/query:
     post:
       consumes:
       - application/json
@@ -980,8 +980,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 查询用户信息
       tags:
-      - '[gateway]用户'
-  /gateway/v1/user/register:
+      - 用户
+  /user/register:
     post:
       consumes:
       - application/json
@@ -1002,8 +1002,8 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 注册
       tags:
-      - '[gateway]用户'
-  /gateway/v1/user/update:
+      - 用户
+  /user/update:
     post:
       consumes:
       - application/json
@@ -1024,5 +1024,5 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: 更新用户信息
       tags:
-      - '[gateway]用户'
+      - 用户
 swagger: "2.0"

@@ -34,7 +34,7 @@ func (r *MsgRouter) Load(g *gin.RouterGroup) {
 
 // @Summary 发送单聊消息
 // @Description 发送单聊消息
-// @Tags [gateway]message
+// @Tags message
 // @Accept  json
 // @Produce  json
 // @Param   Authorization header string true "token"
@@ -42,7 +42,7 @@ func (r *MsgRouter) Load(g *gin.RouterGroup) {
 // @Success 200 {object} messagev1.SendMessageResp
 // @Failure 200 {object} response.Response
 // @Failure 401 {null} null
-// @Router /gateway/v1/message/send_msg [post]
+// @Router /message/send_msg [post]
 func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
 	req := new(messagev1.SendMessageReq)
 	if err := c.ShouldBindWith(req, request.PbJSONBinding{}); err != nil {
@@ -68,7 +68,7 @@ func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
 
 // @Summary 发送广播消息
 // @Description 发送广播消息
-// @Tags [gateway]message
+// @Tags message
 // @Accept  json
 // @Produce  json
 // @Param   Authorization header string true "token"
@@ -76,7 +76,7 @@ func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
 // @Success 200 {object} messagev1.SendMessageResp
 // @Failure 200 {object} response.Response
 // @Failure 401 {null} null
-// @Router /gateway/v1/message/broadcast [post]
+// @Router /message/broadcast [post]
 func (r *MsgRouter) handleSendBroadcastMsg(c *gin.Context) {
 	req := new(messagev1.SendMessageReq)
 	if err := c.ShouldBindWith(req, request.PbJSONBinding{}); err != nil {
