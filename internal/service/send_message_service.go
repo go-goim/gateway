@@ -4,19 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"time"
-
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-	ggrpc "google.golang.org/grpc"
 
 	responsepb "github.com/go-goim/api/transport/response"
 	friendpb "github.com/go-goim/api/user/friend/v1"
 	sessionpb "github.com/go-goim/api/user/session/v1"
-	cgrpc "github.com/go-goim/core/pkg/conn/grpc"
-	"github.com/go-goim/core/pkg/graceful"
-	"github.com/go-goim/core/pkg/initialize"
-
 	"github.com/go-goim/core/pkg/log"
 
 	messagev1 "github.com/go-goim/api/message/v1"
@@ -28,7 +19,6 @@ import (
 
 type SendMessageService struct {
 	messagev1.UnimplementedSendMessagerServer
-	cp *cgrpc.ConnPool
 }
 
 var (
@@ -37,12 +27,6 @@ var (
 
 func GetSendMessageService() *SendMessageService {
 	return sendMessageService
-}
-
-func init() {
-	initialize.Register(initialize.NewBasicInitializer("send_message_service", nil, func() error {
-		return sendMessageService.initConnPool()
-	}))
 }
 
 func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.SendMessageReq) (*messagev1.SendMessageResp, error) {
@@ -78,7 +62,7 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 }
 
 func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1.SendMessageReq) (int64, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return 0, err
 	}
@@ -105,25 +89,6 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 	}
 
 	return *resp.SessionId, nil
-}
-
-func (s *SendMessageService) initConnPool() error {
-	cp, err := cgrpc.NewConnPool(cgrpc.WithInsecure(),
-		cgrpc.WithClientOption(
-			grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.UserService)),
-			grpc.WithDiscovery(app.GetApplication().Register),
-			grpc.WithTimeout(time.Second*5),
-			grpc.WithOptions(ggrpc.WithBlock()),
-		), cgrpc.WithPoolSize(2))
-	if err != nil {
-		return err
-	}
-
-	s.cp = cp
-	graceful.Register(func(_ context.Context) error {
-		return cp.Release()
-	})
-	return nil
 }
 
 func (s *SendMessageService) Broadcast(ctx context.Context, req *messagev1.SendMessageReq) (*messagev1.SendMessageResp, error) {

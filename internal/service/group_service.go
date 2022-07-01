@@ -2,21 +2,11 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"time"
-
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-	ggrpc "google.golang.org/grpc"
 
 	grouppb "github.com/go-goim/api/user/group/v1"
-	cgrpc "github.com/go-goim/core/pkg/conn/grpc"
-	"github.com/go-goim/core/pkg/graceful"
-	"github.com/go-goim/core/pkg/initialize"
-	"github.com/go-goim/gateway/internal/app"
 )
 
 type GroupService struct {
-	cp *cgrpc.ConnPool
 }
 
 var (
@@ -27,14 +17,8 @@ func GetGroupService() *GroupService {
 	return groupService
 }
 
-func init() {
-	initialize.Register(initialize.NewBasicInitializer("group_service", nil, func() error {
-		return groupService.initConnPool()
-	}))
-}
-
 func (s *GroupService) GetGroup(ctx context.Context, req *grouppb.GetGroupRequest) (*grouppb.Group, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +36,7 @@ func (s *GroupService) GetGroup(ctx context.Context, req *grouppb.GetGroupReques
 }
 
 func (s *GroupService) UpdateGroup(ctx context.Context, req *grouppb.UpdateGroupRequest) (*grouppb.Group, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +54,7 @@ func (s *GroupService) UpdateGroup(ctx context.Context, req *grouppb.UpdateGroup
 }
 
 func (s *GroupService) CreateGroup(ctx context.Context, req *grouppb.CreateGroupRequest) (*grouppb.Group, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +72,7 @@ func (s *GroupService) CreateGroup(ctx context.Context, req *grouppb.CreateGroup
 }
 
 func (s *GroupService) ListGroup(ctx context.Context, req *grouppb.ListGroupsRequest) ([]*grouppb.Group, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +90,7 @@ func (s *GroupService) ListGroup(ctx context.Context, req *grouppb.ListGroupsReq
 }
 
 func (s *GroupService) DeleteGroup(ctx context.Context, req *grouppb.DeleteGroupRequest) error {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return err
 	}
@@ -124,7 +108,7 @@ func (s *GroupService) DeleteGroup(ctx context.Context, req *grouppb.DeleteGroup
 }
 
 func (s *GroupService) AddGroupMember(ctx context.Context, req *grouppb.AddGroupMemberRequest) (int, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return 0, err
 	}
@@ -142,7 +126,7 @@ func (s *GroupService) AddGroupMember(ctx context.Context, req *grouppb.AddGroup
 }
 
 func (s *GroupService) RemoveGroupMember(ctx context.Context, req *grouppb.RemoveGroupMemberRequest) (int, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return 0, err
 	}
@@ -157,23 +141,4 @@ func (s *GroupService) RemoveGroupMember(ctx context.Context, req *grouppb.Remov
 	}
 
 	return int(rsp.GetRemoved()), nil
-}
-
-func (s *GroupService) initConnPool() error {
-	cp, err := cgrpc.NewConnPool(cgrpc.WithInsecure(),
-		cgrpc.WithClientOption(
-			grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.UserService)),
-			grpc.WithDiscovery(app.GetApplication().Register),
-			grpc.WithTimeout(time.Second*5),
-			grpc.WithOptions(ggrpc.WithBlock()),
-		), cgrpc.WithPoolSize(2))
-	if err != nil {
-		return err
-	}
-
-	s.cp = cp
-	graceful.Register(func(_ context.Context) error {
-		return cp.Release()
-	})
-	return nil
 }

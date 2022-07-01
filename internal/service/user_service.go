@@ -3,45 +3,37 @@ package service
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
-
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-	ggrpc "google.golang.org/grpc"
 
 	responsepb "github.com/go-goim/api/transport/response"
 	userv1 "github.com/go-goim/api/user/v1"
-	cgrpc "github.com/go-goim/core/pkg/conn/grpc"
-	"github.com/go-goim/core/pkg/graceful"
-	"github.com/go-goim/core/pkg/initialize"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/util"
 
-	"github.com/go-goim/gateway/internal/app"
 	"github.com/go-goim/gateway/internal/dao"
 )
 
 type UserService struct {
 	userDao *dao.UserDao
-	cp      *cgrpc.ConnPool
 }
 
 var (
-	userService = &UserService{}
+	userService     *UserService
+	userServiceOnce sync.Once
 )
 
 func GetUserService() *UserService {
+	userServiceOnce.Do(func() {
+		userService = &UserService{
+			userDao: dao.GetUserDao(),
+		}
+	})
 	return userService
 }
 
-func init() {
-	initialize.Register(initialize.NewBasicInitializer("user_service", nil, func() error {
-		userService.userDao = dao.GetUserDao()
-		return userService.initConnPool()
-	}))
-}
-
 func (s *UserService) QueryUserInfo(ctx context.Context, req *userv1.QueryUserRequest) (*userv1.User, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +52,7 @@ func (s *UserService) QueryUserInfo(ctx context.Context, req *userv1.QueryUserRe
 
 // Login check user login status and return user info
 func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (*userv1.User, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +114,7 @@ func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (
 
 // Register register user.
 func (s *UserService) Register(ctx context.Context, req *userv1.CreateUserRequest) (*userv1.User, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +134,7 @@ func (s *UserService) Register(ctx context.Context, req *userv1.CreateUserReques
 
 // UpdateUser update user info.
 func (s *UserService) UpdateUser(ctx context.Context, req *userv1.UpdateUserRequest) (*userv1.User, error) {
-	cc, err := s.cp.Get()
+	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -158,23 +150,4 @@ func (s *UserService) UpdateUser(ctx context.Context, req *userv1.UpdateUserRequ
 	}
 
 	return rsp.GetUser().ToUser(), nil
-}
-
-func (s *UserService) initConnPool() error {
-	cp, err := cgrpc.NewConnPool(cgrpc.WithInsecure(),
-		cgrpc.WithClientOption(
-			grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.UserService)),
-			grpc.WithDiscovery(app.GetApplication().Register),
-			grpc.WithTimeout(time.Second*5),
-			grpc.WithOptions(ggrpc.WithBlock()),
-		), cgrpc.WithPoolSize(2))
-	if err != nil {
-		return err
-	}
-
-	s.cp = cp
-	graceful.Register(func(_ context.Context) error {
-		return cp.Release()
-	})
-	return nil
 }
