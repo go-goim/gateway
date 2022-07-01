@@ -39,8 +39,8 @@ func (r *GroupRouter) Load(router *gin.RouterGroup) {
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param Authorization header string true "token"
-// @Param g_id query string true "群组ID"
-// @Param with_member query bool false "是否获取群组成员"
+// @Param gid query string true "群组ID"
+// @Param with_members query bool false "是否获取群组成员"
 // @Success 200 {object} grouppb.Group "Success"
 // @Failure 400 {object} responsepb.BaseResponse "Bad Request"
 // @Router /group/get [get]
@@ -72,7 +72,6 @@ func (r *GroupRouter) getGroup(c *gin.Context) {
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param Authorization header string true "token"
-// @Param uid query string true "用户ID"
 // @Param page query int32 false "页码"
 // @Param size query int32 false "每页数量"
 // @Success 200 {object} response.Response{data=[]grouppb.Group} "Success"
@@ -80,9 +79,8 @@ func (r *GroupRouter) getGroup(c *gin.Context) {
 // @Router /group/list [get]
 func (r *GroupRouter) listGroup(c *gin.Context) {
 	var req struct {
-		Uid  string `form:"uid" binding:"required"`
-		Page int32  `form:"page"`
-		Size int32  `form:"size"` // todo support default size
+		Page int32 `form:"page"`
+		Size int32 `form:"size"` // todo support default size
 	}
 	if err := c.ShouldBindQuery(&req); err != nil {
 		response.ErrorResp(c, err)
@@ -90,7 +88,7 @@ func (r *GroupRouter) listGroup(c *gin.Context) {
 	}
 
 	list, err := service.GetGroupService().ListGroup(mid.GetContext(c), &grouppb.ListGroupsRequest{
-		Uid:      req.Uid,
+		Uid:      mid.GetUID(c),
 		Page:     req.Page,
 		PageSize: req.Size,
 	})
@@ -118,6 +116,8 @@ func (r *GroupRouter) createGroup(c *gin.Context) {
 		response.ErrorResp(c, err)
 		return
 	}
+
+	req.OwnerUid = mid.GetUID(c)
 
 	if err := req.Validate(); err != nil {
 		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))

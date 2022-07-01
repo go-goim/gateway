@@ -178,14 +178,14 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "群组ID",
-                        "name": "g_id",
+                        "name": "gid",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "boolean",
                         "description": "是否获取群组成员",
-                        "name": "with_member",
+                        "name": "with_members",
                         "in": "query"
                     }
                 ],
@@ -318,13 +318,6 @@ const docTemplate = `{
                         "description": "token",
                         "name": "Authorization",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户ID",
-                        "name": "uid",
-                        "in": "query",
                         "required": true
                     },
                     {
@@ -1221,6 +1214,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "members_uid": {
+                    "description": "todo: limit to small number",
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -1361,9 +1355,6 @@ const docTemplate = `{
             "properties": {
                 "gid": {
                     "type": "string"
-                },
-                "group": {
-                    "$ref": "#/definitions/v1.Group"
                 },
                 "id": {
                     "description": "use as session id",

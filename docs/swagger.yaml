@@ -95,6 +95,7 @@ definitions:
       description:
         type: string
       members_uid:
+        description: 'todo: limit to small number'
         items:
           type: string
         type: array
@@ -187,8 +188,6 @@ definitions:
     properties:
       gid:
         type: string
-      group:
-        $ref: '#/definitions/v1.Group'
       id:
         description: use as session id
         type: integer
@@ -442,12 +441,12 @@ paths:
         type: string
       - description: 群组ID
         in: query
-        name: g_id
+        name: gid
         required: true
         type: string
       - description: 是否获取群组成员
         in: query
-        name: with_member
+        name: with_members
         type: boolean
       produces:
       - application/json
@@ -534,11 +533,6 @@ paths:
       - description: token
         in: header
         name: Authorization
-        required: true
-        type: string
-      - description: 用户ID
-        in: query
-        name: uid
         required: true
         type: string
       - description: 页码
