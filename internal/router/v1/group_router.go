@@ -23,14 +23,15 @@ func NewGroupRouter() *GroupRouter {
 }
 
 func (r *GroupRouter) Load(router *gin.RouterGroup) {
-	router.Use(mid.AuthJwtCookie)
+	router.Use(mid.AuthJwt)
 	router.GET("/get", r.getGroup)
 	router.GET("/list", r.listGroup)
 	router.POST("/create", r.createGroup)
 	router.POST("/update", r.updateGroup)
 	router.POST("/delete", r.deleteGroup)
-	router.POST("/join", r.joinGroup)
-	router.POST("/leave", r.leaveGroup)
+	router.POST("/member/add", r.addMember)
+	router.POST("/member/remove", r.removeMember) // kick by manager
+	router.POST("/member/leave", r.leaveGroup)    // leave group by themselves
 }
 
 // @Summary 获取群组信息
@@ -118,7 +119,6 @@ func (r *GroupRouter) createGroup(c *gin.Context) {
 	}
 
 	req.OwnerUid = mid.GetUID(c)
-
 	if err := req.Validate(); err != nil {
 		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
 		return
@@ -195,8 +195,8 @@ func (r *GroupRouter) deleteGroup(c *gin.Context) {
 	response.SuccessResp(c, nil)
 }
 
-// @Summary 加入群组
-// @Description 加入群组
+// @Summary 添加群组成员
+// @Description 任何群成员都可以添加群组成员
 // @Tags 群组
 // @Accept json
 // @Produce json
@@ -204,8 +204,8 @@ func (r *GroupRouter) deleteGroup(c *gin.Context) {
 // @Param body body grouppb.AddGroupMemberRequest true "加入群组请求"
 // @Success 200 {object} response.Response "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /group/join [post]
-func (r *GroupRouter) joinGroup(c *gin.Context) {
+// @Router /group/member/invite [post]
+func (r *GroupRouter) addMember(c *gin.Context) {
 	var req = &grouppb.AddGroupMemberRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
 		response.ErrorResp(c, err)
@@ -226,17 +226,17 @@ func (r *GroupRouter) joinGroup(c *gin.Context) {
 	response.SuccessResp(c, gin.H{"count": cnt})
 }
 
-// @Summary 退出群组
-// @Description 退出群组
+// @Summary 删除群组成员
+// @Description 群管理员可以删除群组成员
 // @Tags 群组
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "token"
-// @Param body body grouppb.RemoveGroupMemberRequest true "退出群组请求"
+// @Param body body grouppb.RemoveGroupMemberRequest true "删除群组成员请求"
 // @Success 200 {object} response.Response "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /group/leave [post]
-func (r *GroupRouter) leaveGroup(c *gin.Context) {
+// @Router /group/member/remove [post]
+func (r *GroupRouter) removeMember(c *gin.Context) {
 	var req = &grouppb.RemoveGroupMemberRequest{}
 	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
 		response.ErrorResp(c, err)
@@ -249,6 +249,39 @@ func (r *GroupRouter) leaveGroup(c *gin.Context) {
 	}
 
 	cnt, err := service.GetGroupService().RemoveGroupMember(mid.GetContext(c), req)
+	if err != nil {
+		response.ErrorResp(c, err)
+		return
+	}
+
+	response.SuccessResp(c, gin.H{"count": cnt})
+}
+
+type leaveGroupRequest struct {
+	GroupId string `json:"gid" validate:"required"`
+}
+
+// @Summary 退出群组
+// @Description 群组成员可以退出群组
+// @Tags 群组
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "token"
+// @Param body body leaveGroupRequest true "退出群组请求"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.Response "Bad Request"
+// @Router /group/member/leave [post]
+func (r *GroupRouter) leaveGroup(c *gin.Context) {
+	var req = &leaveGroupRequest{}
+	if err := c.ShouldBindJSON(req); err != nil {
+		response.ErrorResp(c, err)
+		return
+	}
+
+	cnt, err := service.GetGroupService().RemoveGroupMember(mid.GetContext(c), &grouppb.RemoveGroupMemberRequest{
+		Gid: req.GroupId,
+		Uid: []string{mid.GetUID(c)},
+	})
 	if err != nil {
 		response.ErrorResp(c, err)
 		return

@@ -25,12 +25,12 @@ func NewUserRouter() *UserRouter {
 
 func (r *UserRouter) Load(router *gin.RouterGroup) {
 	friend := NewFriendRouter()
-	friend.Load(router.Group("/friend", mid.AuthJwtCookie))
+	friend.Load(router.Group("/friend", mid.AuthJwt))
 
-	router.POST("/query", mid.AuthJwtCookie, r.queryUser)
+	router.POST("/query", mid.AuthJwt, r.queryUser)
 	router.POST("/login", r.login)
 	router.POST("/register", r.register)
-	router.POST("/update", mid.AuthJwtCookie, r.updateUserInfo)
+	router.POST("/update", mid.AuthJwt, r.updateUserInfo)
 }
 
 type QueryRequestForSwagger struct {

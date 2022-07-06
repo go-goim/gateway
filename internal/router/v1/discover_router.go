@@ -24,7 +24,7 @@ func NewDiscoverRouter() *DiscoverRouter {
 }
 
 func (r *DiscoverRouter) Load(g *gin.RouterGroup) {
-	g.GET("/discover", mid.AuthJwtCookie, r.handleDiscoverPushServer)
+	g.GET("/discover", mid.AuthJwt, r.handleDiscoverPushServer)
 }
 
 // @Summary 获取推送服务器

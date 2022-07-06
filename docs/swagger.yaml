@@ -254,8 +254,6 @@ definitions:
     properties:
       gid:
         type: string
-      owner_uid:
-        type: string
       uid:
         items:
           type: string
@@ -329,6 +327,13 @@ definitions:
         type: string
       uid:
         type: string
+    type: object
+  v1.leaveGroupRequest:
+    properties:
+      gid:
+        type: string
+    required:
+    - gid
     type: object
 info:
   contact:
@@ -462,68 +467,6 @@ paths:
       summary: 获取群组信息
       tags:
       - 群组
-  /group/join:
-    post:
-      consumes:
-      - application/json
-      description: 加入群组
-      parameters:
-      - description: token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: 加入群组请求
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/v1.AddGroupMemberRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 加入群组
-      tags:
-      - 群组
-  /group/leave:
-    post:
-      consumes:
-      - application/json
-      description: 退出群组
-      parameters:
-      - description: token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: 退出群组请求
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/v1.RemoveGroupMemberRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 退出群组
-      tags:
-      - 群组
   /group/list:
     get:
       consumes:
@@ -562,6 +505,99 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: 获取群组列表
+      tags:
+      - 群组
+  /group/member/invite:
+    post:
+      consumes:
+      - application/json
+      description: 任何群成员都可以添加群组成员
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 加入群组请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AddGroupMemberRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 添加群组成员
+      tags:
+      - 群组
+  /group/member/leave:
+    post:
+      consumes:
+      - application/json
+      description: 群组成员可以退出群组
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 退出群组请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.leaveGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 退出群组
+      tags:
+      - 群组
+  /group/member/remove:
+    post:
+      consumes:
+      - application/json
+      description: 群管理员可以删除群组成员
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 删除群组成员请求
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1.RemoveGroupMemberRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除群组成员
       tags:
       - 群组
   /group/update:

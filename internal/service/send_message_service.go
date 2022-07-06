@@ -9,6 +9,7 @@ import (
 	friendpb "github.com/go-goim/api/user/friend/v1"
 	sessionpb "github.com/go-goim/api/user/session/v1"
 	"github.com/go-goim/core/pkg/log"
+	"github.com/go-goim/core/pkg/util"
 
 	messagev1 "github.com/go-goim/api/message/v1"
 
@@ -48,6 +49,10 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 		SessionId:       sid,
 	}
 
+	if util.IsGroupUID(req.GetToUser()) {
+		mm.PushMessageType = messagev1.PushMessageType_Group
+	}
+
 	rsp, err = s.sendMessage(ctx, mm)
 	if err != nil {
 		return nil, err
@@ -73,7 +78,9 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 		SessionType: sessionpb.SessionType_SingleChat,
 	}
 
-	// todo check touid whether is a group id
+	if util.IsGroupUID(req.GetToUser()) {
+		cr.SessionType = sessionpb.SessionType_GroupChat
+	}
 
 	resp, err := friendpb.NewFriendServiceClient(cc).CheckSendMessageAbility(ctx, cr)
 	if err != nil {
