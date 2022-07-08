@@ -5,22 +5,18 @@ import (
 	"encoding/json"
 	"errors"
 
-	responsepb "github.com/go-goim/api/transport/response"
-	friendpb "github.com/go-goim/api/user/friend/v1"
-	sessionpb "github.com/go-goim/api/user/session/v1"
-	"github.com/go-goim/core/pkg/log"
-	"github.com/go-goim/core/pkg/util"
-
 	messagev1 "github.com/go-goim/api/message/v1"
-
+	responsepb "github.com/go-goim/api/transport/response"
+	friendv1 "github.com/go-goim/api/user/friend/v1"
+	sessionv1 "github.com/go-goim/api/user/session/v1"
+	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/mq"
+	"github.com/go-goim/core/pkg/util"
 
 	"github.com/go-goim/gateway/internal/app"
 )
 
-type SendMessageService struct {
-	messagev1.UnimplementedSendMessagerServer
-}
+type SendMessageService struct{}
 
 var (
 	sendMessageService = &SendMessageService{}
@@ -41,16 +37,16 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 	}
 
 	mm := &messagev1.MqMessage{
-		FromUser:        req.GetFromUser(),
-		ToUser:          req.GetToUser(),
-		PushMessageType: messagev1.PushMessageType_User,
-		ContentType:     req.GetContentType(),
-		Content:         req.GetContent(),
-		SessionId:       sid,
+		FromUser:    req.GetFromUser(),
+		ToUser:      req.GetToUser(),
+		SessionType: sessionv1.SessionType_SingleChat,
+		ContentType: req.GetContentType(),
+		Content:     req.GetContent(),
+		SessionId:   sid,
 	}
 
 	if util.IsGroupUID(req.GetToUser()) {
-		mm.PushMessageType = messagev1.PushMessageType_Group
+		mm.SessionType = sessionv1.SessionType_GroupChat
 	}
 
 	rsp, err = s.sendMessage(ctx, mm)
@@ -72,17 +68,17 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 		return 0, err
 	}
 
-	cr := &friendpb.CheckSendMessageAbilityRequest{
+	cr := &friendv1.CheckSendMessageAbilityRequest{
 		FromUid:     req.GetFromUser(),
 		ToUid:       req.GetToUser(),
-		SessionType: sessionpb.SessionType_SingleChat,
+		SessionType: sessionv1.SessionType_SingleChat,
 	}
 
 	if util.IsGroupUID(req.GetToUser()) {
-		cr.SessionType = sessionpb.SessionType_GroupChat
+		cr.SessionType = sessionv1.SessionType_GroupChat
 	}
 
-	resp, err := friendpb.NewFriendServiceClient(cc).CheckSendMessageAbility(ctx, cr)
+	resp, err := friendv1.NewFriendServiceClient(cc).CheckSendMessageAbility(ctx, cr)
 	if err != nil {
 		return 0, err
 	}
@@ -107,11 +103,11 @@ func (s *SendMessageService) Broadcast(ctx context.Context, req *messagev1.SendM
 	}
 
 	mm := &messagev1.MqMessage{
-		FromUser:        req.GetFromUser(),
-		ToUser:          req.GetToUser(),
-		PushMessageType: messagev1.PushMessageType_Broadcast,
-		ContentType:     req.GetContentType(),
-		Content:         req.GetContent(),
+		FromUser:    req.GetFromUser(),
+		ToUser:      req.GetToUser(),
+		SessionType: sessionv1.SessionType_Broadcast,
+		ContentType: req.GetContentType(),
+		Content:     req.GetContent(),
 	}
 
 	rsp, err := s.sendMessage(ctx, mm)
