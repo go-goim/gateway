@@ -6,12 +6,12 @@ import (
 	"errors"
 
 	messagev1 "github.com/go-goim/api/message/v1"
-	responsepb "github.com/go-goim/api/transport/response"
 	friendv1 "github.com/go-goim/api/user/friend/v1"
 	sessionv1 "github.com/go-goim/api/user/session/v1"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/mq"
 	"github.com/go-goim/core/pkg/util"
+	"github.com/go-goim/core/pkg/util/snowflake"
 
 	"github.com/go-goim/gateway/internal/app"
 )
@@ -27,39 +27,35 @@ func GetSendMessageService() *SendMessageService {
 }
 
 func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.SendMessageReq) (*messagev1.SendMessageResp, error) {
-	rsp := new(messagev1.SendMessageResp)
-
 	// check is friend
 	sid, err := s.checkCanSendMsg(ctx, req)
-	if err != nil {
-		rsp.Response = responsepb.NewBaseResponseWithError(err)
-		return nil, rsp.Response
-	}
-
-	mm := &messagev1.MqMessage{
-		FromUser:    req.GetFromUser(),
-		ToUser:      req.GetToUser(),
-		SessionType: sessionv1.SessionType_SingleChat,
-		ContentType: req.GetContentType(),
-		Content:     req.GetContent(),
-		SessionId:   sid,
-	}
-
-	if util.IsGroupUID(req.GetToUser()) {
-		mm.SessionType = sessionv1.SessionType_GroupChat
-	}
-
-	rsp, err = s.sendMessage(ctx, mm)
 	if err != nil {
 		return nil, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, rsp.Response
+	mm := &messagev1.Message{
+		From:        req.GetFrom(),
+		To:          req.GetTo(),
+		SessionType: sessionv1.SessionType_SingleChat,
+		ContentType: req.GetContentType(),
+		Content:     req.GetContent(),
+		SessionId:   sid,
+		MsgId:       snowflake.Generate().Int64(),
 	}
 
-	rsp.SessionId = sid
-	return rsp, nil
+	if util.IsGroupUID(req.GetTo()) {
+		mm.SessionType = sessionv1.SessionType_GroupChat
+	}
+
+	err = s.sendMessage(ctx, mm)
+	if err != nil {
+		return nil, err
+	}
+
+	return &messagev1.SendMessageResp{
+		SessionId: sid,
+		MsgId:     mm.MsgId,
+	}, nil
 }
 
 func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1.SendMessageReq) (int64, error) {
@@ -69,12 +65,12 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 	}
 
 	cr := &friendv1.CheckSendMessageAbilityRequest{
-		FromUid:     req.GetFromUser(),
-		ToUid:       req.GetToUser(),
+		FromUid:     req.GetFrom(),
+		ToUid:       req.GetTo(),
 		SessionType: sessionv1.SessionType_SingleChat,
 	}
 
-	if util.IsGroupUID(req.GetToUser()) {
+	if util.IsGroupUID(req.GetTo()) {
 		cr.SessionType = sessionv1.SessionType_GroupChat
 	}
 
@@ -98,49 +94,39 @@ func (s *SendMessageService) Broadcast(ctx context.Context, req *messagev1.SendM
 	rsp := new(messagev1.SendMessageResp)
 	// check req params
 	if err := req.Validate(); err != nil {
-		rsp.Response = responsepb.NewBaseResponseWithMessage(responsepb.Code_InvalidParams, err.Error())
-		return nil, rsp.Response
+		return nil, err
 	}
 
-	mm := &messagev1.MqMessage{
-		FromUser:    req.GetFromUser(),
-		ToUser:      req.GetToUser(),
+	mm := &messagev1.Message{
+		MsgId: snowflake.Generate().Int64(),
+		// TODO: need session id for broadcast
+		From:        req.GetFrom(),
+		To:          req.GetTo(),
 		SessionType: sessionv1.SessionType_Broadcast,
 		ContentType: req.GetContentType(),
 		Content:     req.GetContent(),
 	}
 
-	rsp, err := s.sendMessage(ctx, mm)
+	err := s.sendMessage(ctx, mm)
 	if err != nil {
 		return nil, err
-	}
-
-	if !rsp.Response.Success() {
-		return nil, rsp.Response
 	}
 
 	return rsp, nil
 }
 
-func (s *SendMessageService) sendMessage(ctx context.Context, mm *messagev1.MqMessage) (*messagev1.SendMessageResp, error) {
-	rsp := new(messagev1.SendMessageResp)
-	rsp.Response = responsepb.Code_OK.BaseResponse()
-
+func (s *SendMessageService) sendMessage(ctx context.Context, mm *messagev1.Message) error {
 	b, err := json.Marshal(mm)
 	if err != nil {
-		rsp.Response = responsepb.NewBaseResponseWithError(err)
-		return rsp, nil
+		return err
 	}
 
 	// todo: maybe use another topic for all broadcast messages
 	rs, err := app.GetApplication().Producer.SendSync(ctx, mq.NewMessage("def_topic", b))
 	if err != nil {
-		rsp.Response = responsepb.NewBaseResponseWithError(err)
-		return rsp, nil
+		return err
 	}
 
 	log.Info("send message success", "rs", rs)
-	rsp.MsgSeq = rs.MsgID
-
-	return rsp, nil
+	return nil
 }
