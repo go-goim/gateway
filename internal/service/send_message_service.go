@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	messagev1 "github.com/go-goim/api/message/v1"
 	friendv1 "github.com/go-goim/api/user/friend/v1"
@@ -41,6 +42,7 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 		Content:     req.GetContent(),
 		SessionId:   sid,
 		MsgId:       snowflake.Generate().Int64(),
+		CreateTime:  time.Now().UnixMilli(),
 	}
 
 	if util.IsGroupUID(req.GetTo()) {
@@ -105,6 +107,7 @@ func (s *SendMessageService) Broadcast(ctx context.Context, req *messagev1.SendM
 		SessionType: sessionv1.SessionType_Broadcast,
 		ContentType: req.GetContentType(),
 		Content:     req.GetContent(),
+		CreateTime:  time.Now().UnixMilli(),
 	}
 
 	err := s.sendMessage(ctx, mm)

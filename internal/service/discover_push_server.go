@@ -18,7 +18,7 @@ func LoadMatchedPushServer(ctx context.Context) (string, error) {
 	}
 
 	if len(list) == 0 {
-		return "", fmt.Errorf("service not found")
+		return "", fmt.Errorf("push service not found")
 	}
 
 	var eps []string

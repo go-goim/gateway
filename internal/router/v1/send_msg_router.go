@@ -62,7 +62,8 @@ func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
 	}
 
 	response.SuccessResp(c, gin.H{
-		"msg_seq": rsp.GetMsgSeq(),
+		"msg_id":     rsp.GetMsgId(),
+		"session_id": rsp.GetSessionId(),
 	})
 }
 
@@ -91,6 +92,7 @@ func (r *MsgRouter) handleSendBroadcastMsg(c *gin.Context) {
 	}
 
 	response.SuccessResp(c, gin.H{
-		"msg_seq": rsp.GetMsgSeq(),
+		"msg_id":     rsp.GetMsgId(),
+		"session_id": rsp.GetSessionId(),
 	})
 }

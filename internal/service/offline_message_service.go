@@ -18,13 +18,13 @@ func GetOfflineMessageService() *OfflineMessageService {
 }
 
 func (s *OfflineMessageService) QueryOfflineMsg(ctx context.Context, req *messagev1.QueryOfflineMessageReq) (
-	[]*messagev1.BriefMessage, error) {
+	[]*messagev1.Message, error) {
 	cc, err := msgServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
 
-	rsp, err := messagev1.NewOfflineMessageClient(cc).QueryOfflineMessage(ctx, req)
+	rsp, err := messagev1.NewOfflineMessageServiceClient(cc).QueryOfflineMessage(ctx, req)
 	if err != nil {
 		return nil, err
 	}
