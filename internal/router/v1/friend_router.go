@@ -76,10 +76,11 @@ func (r *FriendRouter) listFriendRequest(c *gin.Context) {
 		Uid: uid,
 	}
 
-	var status int
+	var status int32
 	statusStr := c.Query("status")
 	if statusStr != "" {
-		status, _ = strconv.Atoi(statusStr)
+		i64, _ := strconv.ParseInt(statusStr, 10, 32)
+		status = int32(i64)
 	}
 	req.Status = friendpb.FriendRequestStatus(status)
 
