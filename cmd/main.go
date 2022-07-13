@@ -7,17 +7,15 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	messagev1 "github.com/go-goim/api/message/v1"
 	"github.com/go-goim/core/pkg/cmd"
 	"github.com/go-goim/core/pkg/graceful"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/mid"
 
+	_ "github.com/swaggo/swag"
+
 	"github.com/go-goim/gateway/internal/app"
 	"github.com/go-goim/gateway/internal/router"
-	"github.com/go-goim/gateway/internal/service"
-
-	_ "github.com/swaggo/swag"
 
 	_ "github.com/go-goim/gateway/docs"
 )
@@ -44,9 +42,6 @@ func Main() {
 	if err != nil {
 		log.Fatal("initApplication got err", "error", err)
 	}
-
-	// register grpc
-	messagev1.RegisterSendMessagerServer(application.GrpcSrv, &service.SendMessageService{})
 
 	g := gin.New()
 	g.Use(gin.Recovery(), mid.Logger)

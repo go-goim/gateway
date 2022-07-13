@@ -24,18 +24,18 @@ func NewDiscoverRouter() *DiscoverRouter {
 }
 
 func (r *DiscoverRouter) Load(g *gin.RouterGroup) {
-	g.GET("/discover", mid.AuthJwtCookie, r.handleDiscoverPushServer)
+	g.GET("/discover", mid.AuthJwt, r.handleDiscoverPushServer)
 }
 
 // @Summary 获取推送服务器
 // @Description 获取推送服务器 IP
-// @Tags [gateway]discover
+// @Tags discover
 // @Produce  json
 // @Param   token query string true "token"
 // @Success 200 {string} string "success"
 // @Failure 200 {object} response.Response "errCode"
 // @Failure 401 {null} null "unauthorized"
-// @Router /gateway/v1/discovery/discover [get]
+// @Router /discovery/discover [get]
 func (r *DiscoverRouter) handleDiscoverPushServer(c *gin.Context) {
 	uid := c.GetString("uid")
 	if uid == "" {

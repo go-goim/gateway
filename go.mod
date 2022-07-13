@@ -4,19 +4,13 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.8.1
-	github.com/go-goim/api v0.0.3
-	github.com/go-goim/core v0.0.3
+	github.com/go-goim/api v0.0.5
+	github.com/go-goim/core v0.0.5
 	github.com/go-kratos/kratos/v2 v2.3.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2
 	github.com/swaggo/gin-swagger v1.4.3
 	github.com/swaggo/swag v1.8.2
-	google.golang.org/grpc v1.47.0
-)
-
-replace (
-	github.com/go-goim/api => ../api
-	github.com/go-goim/core => ../core
 )
 
 require (
@@ -48,7 +42,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/golang/mock v1.3.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
@@ -95,12 +89,13 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.10 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
+	google.golang.org/grpc v1.47.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.3.3 // indirect
-	gorm.io/gorm v1.23.6 // indirect
+	gorm.io/gorm v1.23.7 // indirect
 	stathat.com/c/consistent v1.0.0 // indirect
 )
 

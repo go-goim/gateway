@@ -25,14 +25,14 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/gateway/v1/discovery/discover": {
+        "/discovery/discover": {
             "get": {
                 "description": "获取推送服务器 IP",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]discover"
+                    "discover"
                 ],
                 "summary": "获取推送服务器",
                 "parameters": [
@@ -60,7 +60,405 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/message/broadcast": {
+        "/group/create": {
+            "post": {
+                "description": "创建群组",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群组"
+                ],
+                "summary": "创建群组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "创建群组请求",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateGroupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Group"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/delete": {
+            "post": {
+                "description": "删除群组",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群组"
+                ],
+                "summary": "删除群组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除群组请求",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.DeleteGroupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/get": {
+            "get": {
+                "description": "获取群组信息",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群组"
+                ],
+                "summary": "获取群组信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "群组ID",
+                        "name": "gid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否获取群组成员",
+                        "name": "with_members",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Group"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/list": {
+            "get": {
+                "description": "获取群组列表",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群组"
+                ],
+                "summary": "获取群组列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/v1.Group"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/member/invite": {
+            "post": {
+                "description": "任何群成员都可以添加群组成员",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群组"
+                ],
+                "summary": "添加群组成员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "加入群组请求",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AddGroupMemberRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/member/leave": {
+            "post": {
+                "description": "群组成员可以退出群组",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群组"
+                ],
+                "summary": "退出群组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "退出群组请求",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.leaveGroupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/member/remove": {
+            "post": {
+                "description": "群管理员可以删除群组成员",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群组"
+                ],
+                "summary": "删除群组成员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除群组成员请求",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.RemoveGroupMemberRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/update": {
+            "post": {
+                "description": "更新群组",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群组"
+                ],
+                "summary": "更新群组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "更新群组请求",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateGroupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Group"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/message/broadcast": {
             "post": {
                 "description": "发送广播消息",
                 "consumes": [
@@ -70,7 +468,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]message"
+                    "message"
                 ],
                 "summary": "发送广播消息",
                 "parameters": [
@@ -107,7 +505,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/message/send_msg": {
+        "/message/send_msg": {
             "post": {
                 "description": "发送单聊消息",
                 "consumes": [
@@ -117,7 +515,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]message"
+                    "message"
                 ],
                 "summary": "发送单聊消息",
                 "parameters": [
@@ -154,7 +552,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/offline_message/query": {
+        "/offline_message/query": {
             "post": {
                 "description": "查询离线消息",
                 "consumes": [
@@ -164,7 +562,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]offline_message"
+                    "offline_message"
                 ],
                 "summary": "查询离线消息",
                 "parameters": [
@@ -194,7 +592,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/accept": {
+        "/user/friend/accept": {
             "post": {
                 "description": "接受好友请求",
                 "consumes": [
@@ -204,7 +602,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "接受好友请求",
                 "parameters": [
@@ -241,7 +639,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/add": {
+        "/user/friend/add": {
             "post": {
                 "description": "添加好友",
                 "consumes": [
@@ -251,7 +649,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "添加好友",
                 "parameters": [
@@ -288,7 +686,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/block": {
+        "/user/friend/block": {
             "post": {
                 "description": "屏蔽好友",
                 "consumes": [
@@ -298,7 +696,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "屏蔽好友",
                 "parameters": [
@@ -335,7 +733,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/delete": {
+        "/user/friend/delete": {
             "post": {
                 "description": "删除好友",
                 "consumes": [
@@ -345,7 +743,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "删除好友",
                 "parameters": [
@@ -382,14 +780,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/list": {
+        "/user/friend/list": {
             "get": {
                 "description": "获取好友列表",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "获取好友列表",
                 "parameters": [
@@ -432,7 +830,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/reject": {
+        "/user/friend/reject": {
             "post": {
                 "description": "拒绝好友请求",
                 "consumes": [
@@ -442,7 +840,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "拒绝好友请求",
                 "parameters": [
@@ -479,14 +877,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/request/list": {
+        "/user/friend/request/list": {
             "get": {
                 "description": "获取好友请求列表",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "获取好友请求列表",
                 "parameters": [
@@ -514,7 +912,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/friend/unblock": {
+        "/user/friend/unblock": {
             "post": {
                 "description": "取消屏蔽好友",
                 "consumes": [
@@ -524,7 +922,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]好友"
+                    "好友"
                 ],
                 "summary": "取消屏蔽好友",
                 "parameters": [
@@ -561,7 +959,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/login": {
+        "/user/login": {
             "post": {
                 "description": "用户登录",
                 "consumes": [
@@ -571,7 +969,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]用户"
+                    "用户"
                 ],
                 "summary": "登录",
                 "parameters": [
@@ -613,7 +1011,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/query": {
+        "/user/query": {
             "post": {
                 "description": "查询用户信息",
                 "consumes": [
@@ -623,7 +1021,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]用户"
+                    "用户"
                 ],
                 "summary": "查询用户信息",
                 "parameters": [
@@ -647,7 +1045,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/register": {
+        "/user/register": {
             "post": {
                 "description": "用户注册",
                 "consumes": [
@@ -657,7 +1055,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]用户"
+                    "用户"
                 ],
                 "summary": "注册",
                 "parameters": [
@@ -681,7 +1079,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gateway/v1/user/update": {
+        "/user/update": {
             "post": {
                 "description": "更新用户信息",
                 "consumes": [
@@ -691,7 +1089,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[gateway]用户"
+                    "用户"
                 ],
                 "summary": "更新用户信息",
                 "parameters": [
@@ -791,6 +1189,20 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.AddGroupMemberRequest": {
+            "type": "object",
+            "properties": {
+                "gid": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "v1.BaseFriendRequest": {
             "type": "object",
             "properties": {
@@ -817,6 +1229,9 @@ const docTemplate = `{
                 "msg_seq": {
                     "type": "string"
                 },
+                "session_id": {
+                    "type": "integer"
+                },
                 "to_user": {
                     "type": "string"
                 }
@@ -836,6 +1251,30 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.CreateGroupRequest": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "members_uid": {
+                    "description": "todo: limit to small number",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner_uid": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.CreateUserRequest": {
             "type": "object",
             "properties": {
@@ -847,6 +1286,17 @@ const docTemplate = `{
                 },
                 "user": {
                     "description": "Types that are assignable to User:\n\t*CreateUserRequest_Email\n\t*CreateUserRequest_Phone"
+                }
+            }
+        },
+        "v1.DeleteGroupRequest": {
+            "type": "object",
+            "properties": {
+                "gid": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
                 }
             }
         },
@@ -903,6 +1353,71 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "integer"
+                }
+            }
+        },
+        "v1.Group": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "gid": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "max_members": {
+                    "type": "integer"
+                },
+                "member_count": {
+                    "type": "integer"
+                },
+                "members": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.GroupMember"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "$ref": "#/definitions/v1.GroupMember"
+                },
+                "owner_uid": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.GroupMember": {
+            "type": "object",
+            "properties": {
+                "gid": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "use as session id",
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/v1.User"
                 }
             }
         },
@@ -979,6 +1494,20 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.RemoveGroupMemberRequest": {
+            "type": "object",
+            "properties": {
+                "gid": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "v1.SendMessageReq": {
             "type": "object",
             "properties": {
@@ -1000,11 +1529,35 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "msg_seq": {
-                    "description": "MsgSeq is unique seq of a message",
                     "type": "string"
                 },
                 "response": {
                     "$ref": "#/definitions/response.BaseResponse"
+                },
+                "session_id": {
+                    "description": "MsgSeq is unique seq of a message",
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.UpdateGroupRequest": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "gid": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "uid": {
+                    "description": "current user id",
+                    "type": "string"
                 }
             }
         },
@@ -1052,6 +1605,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "uid": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.leaveGroupRequest": {
+            "type": "object",
+            "required": [
+                "gid"
+            ],
+            "properties": {
+                "gid": {
                     "type": "string"
                 }
             }

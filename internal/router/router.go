@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/go-goim/core/pkg/router"
 
 	v1 "github.com/go-goim/gateway/internal/router/v1"
@@ -25,6 +26,13 @@ func (r *rootRouter) init() {
 }
 
 func RegisterRouter(g *gin.RouterGroup) {
+	g.GET("/ping", ping)
 	r := newRootRouter()
 	r.Load(g)
+}
+
+func ping(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "pong",
+	})
 }
