@@ -2,7 +2,7 @@ package dto
 
 import (
 	userv1 "github.com/go-goim/api/user/v1"
-	"github.com/go-goim/core/pkg/model"
+	"github.com/go-goim/core/pkg/types"
 )
 
 // Requests
@@ -99,7 +99,7 @@ func (r *UpdateUserRequest) ToPb() *userv1.UpdateUserRequest {
 }
 
 type User struct {
-	UID         *model.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
+	UID         *types.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
 	Name        string    `json:"name" example:"user1"`
 	Avatar      string    `json:"avatar" example:"https://www.example.com/avatar.png"`
 	Email       *string   `json:"email,omitempty" example:"abc@example.com"`
@@ -114,7 +114,7 @@ func UserFromPb(pb *userv1.User) *User {
 	}
 
 	return &User{
-		UID:         model.NewID(pb.Uid),
+		UID:         types.NewID(pb.Uid),
 		Name:        pb.Name,
 		Avatar:      pb.Avatar,
 		Email:       pb.Email,

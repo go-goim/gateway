@@ -5,8 +5,8 @@ import (
 
 	responsepb "github.com/go-goim/api/transport/response"
 	"github.com/go-goim/core/pkg/mid"
-	"github.com/go-goim/core/pkg/model"
 	"github.com/go-goim/core/pkg/router"
+	"github.com/go-goim/core/pkg/types"
 	"github.com/go-goim/core/pkg/web/response"
 	"github.com/go-goim/gateway/internal/dto"
 	"github.com/go-goim/gateway/internal/service"
@@ -238,7 +238,7 @@ func (r *GroupRouter) leaveGroup(c *gin.Context) {
 	}
 
 	req.UID = mid.GetUID(c)
-	req.UIDs = []*model.ID{req.UID}
+	req.UIDs = []*types.ID{req.UID}
 	cnt, err := service.GetGroupService().RemoveGroupMember(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)

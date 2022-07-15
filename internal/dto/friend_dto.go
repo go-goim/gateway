@@ -1,9 +1,9 @@
 package dto
 
 import (
+	messagev1 "github.com/go-goim/api/message/v1"
 	friendv1 "github.com/go-goim/api/user/friend/v1"
-	sessionv1 "github.com/go-goim/api/user/session/v1"
-	"github.com/go-goim/core/pkg/model"
+	"github.com/go-goim/core/pkg/types"
 )
 
 type AddFriendResult struct {
@@ -19,8 +19,8 @@ func AddFriendResultFromPb(pb *friendv1.AddFriendResult) *AddFriendResult {
 }
 
 type BaseFriendRequest struct {
-	UID       *model.ID `json:"-"` // no validation
-	FriendUID *model.ID `json:"friendUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	UID       *types.ID `json:"-"` // no validation
+	FriendUID *types.ID `json:"friendUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
 }
 
 func (r *BaseFriendRequest) ToPb() *friendv1.BaseFriendRequest {
@@ -32,8 +32,8 @@ func (r *BaseFriendRequest) ToPb() *friendv1.BaseFriendRequest {
 }
 
 type ConfirmFriendRequestRequest struct {
-	UID             *model.ID `json:"-"`
-	FriendRequestID int64     `json:"friendRequestId" validate:"required" example:"2"`
+	UID             *types.ID `json:"-"`
+	FriendRequestID uint64    `json:"friendRequestId" validate:"required" example:"2"`
 	Action          int32     `json:"-"`
 }
 
@@ -47,7 +47,7 @@ func (r *ConfirmFriendRequestRequest) ToPb() *friendv1.ConfirmFriendRequestReque
 }
 
 type QueryFriendRequestListRequest struct {
-	UID    *model.ID `json:"-" form:"-"`
+	UID    *types.ID `json:"-" form:"-"`
 	Status int32     `form:"status" validate:"required,oneof=0 1" example:"0"`
 }
 
@@ -60,8 +60,8 @@ func (r *QueryFriendRequestListRequest) ToPb() *friendv1.QueryFriendRequestListR
 }
 
 type UpdateFriendStatusRequest struct {
-	UID       *model.ID `json:"uid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
-	FriendUID *model.ID `json:"friendUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	UID       *types.ID `json:"uid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	FriendUID *types.ID `json:"friendUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
 	Status    int32     `json:"status" validate:"required,oneof=0 1 2 3" example:"0"`
 }
 
@@ -77,8 +77,8 @@ func (r *UpdateFriendStatusRequest) ToPb() *friendv1.UpdateFriendStatusRequest {
 }
 
 type CheckSendMessageAbilityRequest struct {
-	FromUID     *model.ID `json:"fromUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
-	ToUID       *model.ID `json:"toUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	FromUID     *types.ID `json:"fromUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	ToUID       *types.ID `json:"toUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
 	SessionType int32     `json:"sessionType" validate:"required,gte=0,lte=255" example:"0"`
 }
 
@@ -86,15 +86,15 @@ func (r *CheckSendMessageAbilityRequest) ToPb() *friendv1.CheckSendMessageAbilit
 	pb := &friendv1.CheckSendMessageAbilityRequest{}
 	pb.FromUid = r.FromUID.Int64()
 	pb.ToUid = r.ToUID.Int64()
-	pb.SessionType = sessionv1.SessionType(r.SessionType)
+	pb.SessionType = messagev1.SessionType(r.SessionType)
 
 	return pb
 }
 
 type FriendRequest struct {
-	ID           int64     `json:"id" example:"1"`
-	UID          *model.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
-	FriendUID    *model.ID `json:"friendUid" swaggertype:"string" example:"av8FMdRdcb"`
+	ID           uint64    `json:"id" example:"1"`
+	UID          *types.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
+	FriendUID    *types.ID `json:"friendUid" swaggertype:"string" example:"av8FMdRdcb"`
 	FriendName   string    `json:"friendName" example:"friendName"`
 	FriendAvatar string    `json:"friendAvatar" example:"https://www.example.com/friendAvatar.png"`
 	// 0: pending, 1: accepted, 2: rejected
@@ -106,8 +106,8 @@ type FriendRequest struct {
 func FriendRequestFromPb(pb *friendv1.FriendRequest) *FriendRequest {
 	return &FriendRequest{
 		ID:           pb.Id,
-		UID:          model.NewID(pb.Uid),
-		FriendUID:    model.NewID(pb.FriendUid),
+		UID:          types.NewID(pb.Uid),
+		FriendUID:    types.NewID(pb.FriendUid),
 		FriendName:   pb.FriendName,
 		FriendAvatar: pb.FriendAvatar,
 		Status:       int32(pb.Status),
@@ -125,8 +125,8 @@ func FriendRequestListFromPb(pb []*friendv1.FriendRequest) []*FriendRequest {
 }
 
 type Friend struct {
-	UID          *model.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
-	FriendUID    *model.ID `json:"friendUid" swaggertype:"string" example:"av8FMdRdcb"`
+	UID          *types.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
+	FriendUID    *types.ID `json:"friendUid" swaggertype:"string" example:"av8FMdRdcb"`
 	FriendName   string    `json:"friendName" example:"friendName"`
 	FriendAvatar string    `json:"friendAvatar" example:"https://www.example.com/friendAvatar.png"`
 	// 0: friend, 1: stranger, 2: blacklist
@@ -137,8 +137,8 @@ type Friend struct {
 
 func FriendFromPb(pb *friendv1.Friend) *Friend {
 	return &Friend{
-		UID:          model.NewID(pb.Uid),
-		FriendUID:    model.NewID(pb.FriendUid),
+		UID:          types.NewID(pb.Uid),
+		FriendUID:    types.NewID(pb.FriendUid),
 		FriendName:   pb.FriendName,
 		FriendAvatar: pb.FriendAvatar,
 		Status:       int32(pb.Status),

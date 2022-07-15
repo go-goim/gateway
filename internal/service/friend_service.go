@@ -4,7 +4,7 @@ import (
 	"context"
 
 	friendpb "github.com/go-goim/api/user/friend/v1"
-	"github.com/go-goim/core/pkg/model"
+	"github.com/go-goim/core/pkg/types"
 	"github.com/go-goim/core/pkg/web"
 	"github.com/go-goim/gateway/internal/dto"
 )
@@ -92,7 +92,7 @@ func (s *FriendService) confirmFriendRequest(ctx context.Context, req *dto.Confi
  * Friend Logic
  */
 
-func (s *FriendService) ListUserRelation(ctx context.Context, uid *model.ID, paging *web.Paging) (
+func (s *FriendService) ListUserRelation(ctx context.Context, uid *types.ID, paging *web.Paging) (
 	[]*friendpb.Friend, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {

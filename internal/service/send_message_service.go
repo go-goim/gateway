@@ -8,7 +8,6 @@ import (
 
 	messagev1 "github.com/go-goim/api/message/v1"
 	friendv1 "github.com/go-goim/api/user/friend/v1"
-	sessionv1 "github.com/go-goim/api/user/session/v1"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/mq"
 	"github.com/go-goim/core/pkg/util/snowflake"
@@ -66,7 +65,7 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 	cr := &friendv1.CheckSendMessageAbilityRequest{
 		FromUid:     req.From,
 		ToUid:       req.To,
-		SessionType: sessionv1.SessionType(req.SessionType),
+		SessionType: messagev1.SessionType(req.SessionType),
 	}
 
 	resp, err := friendv1.NewFriendServiceClient(cc).CheckSendMessageAbility(ctx, cr)
@@ -94,7 +93,7 @@ func (s *SendMessageService) Broadcast(ctx context.Context, req *dto.SendMessage
 		// TODO: need session id for broadcast
 		From:        pbReq.From,
 		To:          pbReq.To,
-		SessionType: sessionv1.SessionType_Broadcast,
+		SessionType: messagev1.SessionType_Broadcast,
 		ContentType: pbReq.ContentType,
 		Content:     pbReq.Content,
 		CreateTime:  time.Now().UnixMilli(),

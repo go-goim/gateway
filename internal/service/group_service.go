@@ -4,7 +4,7 @@ import (
 	"context"
 
 	grouppb "github.com/go-goim/api/user/group/v1"
-	"github.com/go-goim/core/pkg/model"
+	"github.com/go-goim/core/pkg/types"
 	"github.com/go-goim/core/pkg/web"
 	"github.com/go-goim/gateway/internal/dto"
 )
@@ -74,7 +74,7 @@ func (s *GroupService) CreateGroup(ctx context.Context, req *dto.CreateGroupRequ
 	return dto.GroupFromPb(rsp.GetGroup()), nil
 }
 
-func (s *GroupService) ListGroup(ctx context.Context, uid *model.ID, paging *web.Paging) ([]*dto.Group, error) {
+func (s *GroupService) ListGroup(ctx context.Context, uid *types.ID, paging *web.Paging) ([]*dto.Group, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
