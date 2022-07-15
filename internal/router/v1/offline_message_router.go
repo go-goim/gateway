@@ -3,12 +3,12 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 
-	messagev1 "github.com/go-goim/api/message/v1"
+	responsepb "github.com/go-goim/api/transport/response"
+	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/core/pkg/mid"
-	"github.com/go-goim/core/pkg/request"
-	"github.com/go-goim/core/pkg/response"
 	"github.com/go-goim/core/pkg/router"
+	"github.com/go-goim/core/pkg/web/response"
 
 	"github.com/go-goim/gateway/internal/service"
 )
@@ -24,31 +24,36 @@ func NewOfflineMessageRouter() *OfflineMessageRouter {
 }
 
 func (r *OfflineMessageRouter) Load(g *gin.RouterGroup) {
-	g.POST("/query", r.handleQueryOfflineMessage)
+	g.GET("/query", r.handleQueryOfflineMessage)
 }
 
 // @Summary 查询离线消息
 // @Description 查询离线消息
 // @Tags offline_message
-// @Accept  json
-// @Produce  json
-// @Param   req body messagev1.QueryOfflineMessageReq true "req"
-// @Success 200 {object} messagev1.QueryOfflineMessageResp
-// @Failure 200 {object} response.Response
-// @Failure 401 {null} null
-// @Router /offline_message/query [post]
+// @Accept x-www-form-urlencoded
+// @Produce json
+// @Param Authorization header string true "token"
+// @Param lastMessageId query integer true "lastMessageId"
+// @Param onlyCount query boolean false "onlyCount"
+// @Param page query integer false "page"
+// @Param pageSize query integer false "pageSize"
+// @Success 200 {object} response.Response{data=[]dto.Message} "Success"
+// @Failure 400 {object} response.Response "Bad Request"
+// @Router /offline_message/query [get]
 func (r *OfflineMessageRouter) handleQueryOfflineMessage(c *gin.Context) {
-	req := new(messagev1.QueryOfflineMessageReq)
-	if err := c.ShouldBindWith(req, request.PbJSONBinding{}); err != nil {
-		response.ErrorResp(c, err)
+	req := new(dto.QueryOfflineMessageReq)
+	if err := c.ShouldBindQuery(req); err != nil {
+		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
 		return
 	}
 
-	messages, err := service.GetOfflineMessageService().QueryOfflineMsg(mid.GetContext(c), req)
+	req.UID = mid.GetUID(c)
+	req.Paging = mid.GetPaging(c)
+	messages, cnt, err := service.GetOfflineMessageService().QueryOfflineMsg(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
 		return
 	}
 
-	response.SuccessResp(c, messages, response.SetTotal(len(messages)))
+	response.SuccessResp(c, messages, response.SetTotal(cnt), response.SetPaging(req.Paging))
 }

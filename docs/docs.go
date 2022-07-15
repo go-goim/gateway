@@ -87,7 +87,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreateGroupRequest"
+                            "$ref": "#/definitions/dto.CreateGroupRequest"
                         }
                     }
                 ],
@@ -95,7 +95,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/v1.Group"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.Group"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -134,7 +146,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.DeleteGroupRequest"
+                            "$ref": "#/definitions/dto.DeleteGroupRequest"
                         }
                     }
                 ],
@@ -187,19 +199,37 @@ const docTemplate = `{
                         "description": "是否获取群组成员",
                         "name": "with_members",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否获取群组信息",
+                        "name": "with_info",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/v1.Group"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.Group"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -253,7 +283,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.Group"
+                                                "$ref": "#/definitions/dto.Group"
                                             }
                                         }
                                     }
@@ -297,7 +327,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AddGroupMemberRequest"
+                            "$ref": "#/definitions/dto.ChangeGroupMemberRequest"
                         }
                     }
                 ],
@@ -305,7 +335,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.ChangeGroupMemberResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -344,7 +386,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.leaveGroupRequest"
+                            "$ref": "#/definitions/dto.ChangeGroupMemberRequest"
                         }
                     }
                 ],
@@ -391,7 +433,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.RemoveGroupMemberRequest"
+                            "$ref": "#/definitions/dto.ChangeGroupMemberRequest"
                         }
                     }
                 ],
@@ -399,7 +441,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.ChangeGroupMemberResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -438,7 +492,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdateGroupRequest"
+                            "$ref": "#/definitions/dto.UpdateGroupRequest"
                         }
                     }
                 ],
@@ -446,7 +500,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/v1.Group"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.Group"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -485,21 +551,33 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.SendMessageReq"
+                            "$ref": "#/definitions/dto.SendMessageReq"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.SendMessageResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "null"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -532,31 +610,43 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.SendMessageReq"
+                            "$ref": "#/definitions/dto.SendMessageReq"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.SendMessageResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "null"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
             }
         },
         "/offline_message/query": {
-            "post": {
+            "get": {
                 "description": "查询离线消息",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -567,26 +657,64 @@ const docTemplate = `{
                 "summary": "查询离线消息",
                 "parameters": [
                     {
-                        "description": "req",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.QueryOfflineMessageReq"
-                        }
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "lastMessageId",
+                        "name": "lastMessageId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "onlyCount",
+                        "name": "onlyCount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "pageSize",
+                        "name": "pageSize",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.Message"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "null"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -619,7 +747,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ConfirmFriendRequestReq"
+                            "$ref": "#/definitions/dto.ConfirmFriendRequestRequest"
                         }
                     }
                 ],
@@ -627,13 +755,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "400": {
-                        "description": "err",
+                        "description": "error",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -666,21 +794,36 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.AddFriendRequest"
+                            "$ref": "#/definitions/dto.BaseFriendRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/v1.AddFriendResult"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.FriendRequest"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
-                        "description": "err",
+                        "description": "error",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -713,7 +856,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.BaseFriendRequest"
+                            "$ref": "#/definitions/dto.BaseFriendRequest"
                         }
                     }
                 ],
@@ -721,13 +864,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "400": {
-                        "description": "err",
+                        "description": "error",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -760,7 +903,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.BaseFriendRequest"
+                            "$ref": "#/definitions/dto.BaseFriendRequest"
                         }
                     }
                 ],
@@ -768,13 +911,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "400": {
-                        "description": "err",
+                        "description": "error",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -797,6 +940,18 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size",
+                        "name": "size",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -813,7 +968,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.Friend"
+                                                "$ref": "#/definitions/dto.Friend"
                                             }
                                         }
                                     }
@@ -857,7 +1012,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ConfirmFriendRequestReq"
+                            "$ref": "#/definitions/dto.ConfirmFriendRequestRequest"
                         }
                     }
                 ],
@@ -865,13 +1020,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "400": {
-                        "description": "err",
+                        "description": "error",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -894,13 +1049,46 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "status",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.FriendRequest"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -939,7 +1127,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.BaseFriendRequest"
+                            "$ref": "#/definitions/dto.BaseFriendRequest"
                         }
                     }
                 ],
@@ -947,13 +1135,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     },
                     "400": {
-                        "description": "err",
+                        "description": "error",
                         "schema": {
-                            "$ref": "#/definitions/response.BaseResponse"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -979,7 +1167,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.LoginRequestForSwagger"
+                            "$ref": "#/definitions/dto.UserLoginRequest"
                         }
                     }
                 ],
@@ -995,27 +1183,21 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/v1.User"
+                                            "$ref": "#/definitions/dto.User"
                                         }
                                     }
                                 }
                             ]
-                        },
-                        "headers": {
-                            "Authorization": {
-                                "type": "string",
-                                "description": "Bearer "
-                            }
                         }
                     }
                 }
             }
         },
         "/user/query": {
-            "post": {
+            "get": {
                 "description": "查询用户信息",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1026,18 +1208,46 @@ const docTemplate = `{
                 "summary": "查询用户信息",
                 "parameters": [
                     {
-                        "description": "req",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.QueryRequestForSwagger"
-                        }
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "email",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "phone",
+                        "name": "Phone",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1065,13 +1275,31 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreateUserRequest"
+                            "$ref": "#/definitions/dto.CreateUserRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1099,13 +1327,31 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdateUserRequest"
+                            "$ref": "#/definitions/dto.UpdateUserRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1115,17 +1361,490 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "response.BaseResponse": {
+        "dto.BaseFriendRequest": {
+            "type": "object",
+            "required": [
+                "friendUid"
+            ],
+            "properties": {
+                "friendUid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                }
+            }
+        },
+        "dto.ChangeGroupMemberRequest": {
+            "type": "object",
+            "required": [
+                "gid",
+                "uids"
+            ],
+            "properties": {
+                "gid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "uids": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "av8FMdRdcb",
+                        "av8FMdRdcc"
+                    ]
+                }
+            }
+        },
+        "dto.ChangeGroupMemberResponse": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "integer"
+                "count": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dto.ConfirmFriendRequestRequest": {
+            "type": "object",
+            "required": [
+                "friendRequestId"
+            ],
+            "properties": {
+                "friendRequestId": {
+                    "type": "integer",
+                    "example": 2
+                }
+            }
+        },
+        "dto.CreateGroupRequest": {
+            "type": "object",
+            "required": [
+                "members",
+                "name"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string",
+                    "example": "https://example.com/avatar.png"
                 },
-                "message": {
-                    "type": "string"
+                "desc": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "example": "test"
                 },
-                "reason": {
-                    "type": "string"
+                "members": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "minItems": 2,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "av8FMdRdcb",
+                        "av8FMdRdcc"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "test"
+                }
+            }
+        },
+        "dto.CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email and Phone only one can be set",
+                    "type": "string",
+                    "example": "user1@example.com"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 2,
+                    "example": "user1"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 6,
+                    "example": "123456"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "13800138000"
+                }
+            }
+        },
+        "dto.DeleteGroupRequest": {
+            "type": "object",
+            "required": [
+                "gid"
+            ],
+            "properties": {
+                "gid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                }
+            }
+        },
+        "dto.Friend": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer",
+                    "example": 1579098983
+                },
+                "friendAvatar": {
+                    "type": "string",
+                    "example": "https://www.example.com/friendAvatar.png"
+                },
+                "friendName": {
+                    "type": "string",
+                    "example": "friendName"
+                },
+                "friendUid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "status": {
+                    "description": "0: friend, 1: stranger, 2: blacklist",
+                    "type": "integer",
+                    "example": 0
+                },
+                "uid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "updatedAt": {
+                    "type": "integer",
+                    "example": 1579098983
+                }
+            }
+        },
+        "dto.FriendRequest": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer",
+                    "example": 1579098983
+                },
+                "friendAvatar": {
+                    "type": "string",
+                    "example": "https://www.example.com/friendAvatar.png"
+                },
+                "friendName": {
+                    "type": "string",
+                    "example": "friendName"
+                },
+                "friendUid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "status": {
+                    "description": "0: pending, 1: accepted, 2: rejected",
+                    "type": "integer",
+                    "example": 0
+                },
+                "uid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "updatedAt": {
+                    "type": "integer",
+                    "example": 1579098983
+                }
+            }
+        },
+        "dto.Group": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string",
+                    "example": "https://example.com/avatar.png"
+                },
+                "desc": {
+                    "type": "string",
+                    "example": "test"
+                },
+                "gid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "max_member": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "member_count": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "members": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.GroupMember"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test"
+                },
+                "owner": {
+                    "$ref": "#/definitions/dto.GroupMember"
+                },
+                "owner_uid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dto.GroupMember": {
+            "type": "object",
+            "properties": {
+                "gid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "status": {
+                    "description": "0: normal, 1: silent",
+                    "type": "integer",
+                    "example": 1
+                },
+                "type": {
+                    "description": "0: owner, 1: member",
+                    "type": "integer",
+                    "example": 1
+                },
+                "uid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "user": {
+                    "description": "only when withMembers is true and withInfo is true",
+                    "$ref": "#/definitions/dto.User"
+                }
+            }
+        },
+        "dto.Message": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "hello"
+                },
+                "contentType": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "createTime": {
+                    "type": "integer",
+                    "example": 1579098983
+                },
+                "from": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "messageId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "sessionId": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "sessionType": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "to": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                }
+            }
+        },
+        "dto.SendMessageReq": {
+            "type": "object",
+            "required": [
+                "content",
+                "contentType",
+                "from",
+                "sessionId",
+                "sessionType",
+                "to"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "hello"
+                },
+                "contentType": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "from": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "sessionId": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "sessionType": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "to": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                }
+            }
+        },
+        "dto.SendMessageResp": {
+            "type": "object",
+            "properties": {
+                "messageId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "sessionId": {
+                    "type": "string",
+                    "example": "abc"
+                }
+            }
+        },
+        "dto.UpdateGroupRequest": {
+            "type": "object",
+            "required": [
+                "gid"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string",
+                    "example": "https://www.example.com/avatar.png"
+                },
+                "desc": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "example": "test"
+                },
+                "gid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "test"
+                }
+            }
+        },
+        "dto.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string",
+                    "example": "https://www.example.com/avatar.png"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "user1@example.com"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 2,
+                    "example": "user1"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 6,
+                    "example": "123456"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "13800138000"
+                }
+            }
+        },
+        "dto.User": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string",
+                    "example": "https://www.example.com/avatar.png"
+                },
+                "connectUrl": {
+                    "type": "string",
+                    "example": "ws://10.0.0.1:8080/ws"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "abc@example.com"
+                },
+                "loginStatus": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "name": {
+                    "type": "string",
+                    "example": "user1"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "13800138000"
+                },
+                "uid": {
+                    "type": "string",
+                    "example": "av8FMdRdcb"
+                }
+            }
+        },
+        "dto.UserLoginRequest": {
+            "type": "object",
+            "required": [
+                "loginType",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email and Phone only one can be set",
+                    "type": "string",
+                    "example": "user1@example.com"
+                },
+                "loginType": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ],
+                    "example": 0
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 6,
+                    "example": "123456"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "13800138000"
                 }
             }
         },
@@ -1139,10 +1858,14 @@ const docTemplate = `{
                     }
                 },
                 "page": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1
                 },
-                "page_size": {
-                    "type": "integer"
+                "pageSize": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 10
                 },
                 "total": {
                     "type": "integer"
@@ -1163,459 +1886,6 @@ const docTemplate = `{
                     "$ref": "#/definitions/response.Meta"
                 },
                 "reason": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.AddFriendRequest": {
-            "type": "object",
-            "properties": {
-                "friend_uid": {
-                    "type": "string"
-                },
-                "uid": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.AddFriendResult": {
-            "type": "object",
-            "properties": {
-                "friend_request": {
-                    "$ref": "#/definitions/v1.FriendRequest"
-                },
-                "status": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.AddGroupMemberRequest": {
-            "type": "object",
-            "properties": {
-                "gid": {
-                    "type": "string"
-                },
-                "uid": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "v1.BaseFriendRequest": {
-            "type": "object",
-            "properties": {
-                "friend_uid": {
-                    "type": "string"
-                },
-                "uid": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.BriefMessage": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "content_type": {
-                    "type": "integer"
-                },
-                "from_user": {
-                    "type": "string"
-                },
-                "msg_seq": {
-                    "type": "string"
-                },
-                "session_id": {
-                    "type": "integer"
-                },
-                "to_user": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.ConfirmFriendRequestReq": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "integer"
-                },
-                "friend_request_id": {
-                    "type": "integer"
-                },
-                "uid": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.CreateGroupRequest": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "members_uid": {
-                    "description": "todo: limit to small number",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "owner_uid": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.CreateUserRequest": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "user": {
-                    "description": "Types that are assignable to User:\n\t*CreateUserRequest_Email\n\t*CreateUserRequest_Phone"
-                }
-            }
-        },
-        "v1.DeleteGroupRequest": {
-            "type": "object",
-            "properties": {
-                "gid": {
-                    "type": "string"
-                },
-                "uid": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.Friend": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "integer"
-                },
-                "friend_avatar": {
-                    "type": "string"
-                },
-                "friend_name": {
-                    "type": "string"
-                },
-                "friend_uid": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "uid": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.FriendRequest": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "integer"
-                },
-                "friend_avatar": {
-                    "type": "string"
-                },
-                "friend_name": {
-                    "description": "friend info for view",
-                    "type": "string"
-                },
-                "friend_uid": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "uid": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.Group": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "gid": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "max_members": {
-                    "type": "integer"
-                },
-                "member_count": {
-                    "type": "integer"
-                },
-                "members": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.GroupMember"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "owner": {
-                    "$ref": "#/definitions/v1.GroupMember"
-                },
-                "owner_uid": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.GroupMember": {
-            "type": "object",
-            "properties": {
-                "gid": {
-                    "type": "string"
-                },
-                "id": {
-                    "description": "use as session id",
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "type": {
-                    "type": "integer"
-                },
-                "uid": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/v1.User"
-                }
-            }
-        },
-        "v1.LoginRequestForSwagger": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "description": "Email and Phone only one can be set",
-                    "type": "string",
-                    "example": "user1@example.com"
-                },
-                "loginType": {
-                    "type": "integer",
-                    "example": 0
-                },
-                "password": {
-                    "type": "string",
-                    "example": "123456"
-                },
-                "phone": {
-                    "type": "string",
-                    "example": "13800138000"
-                }
-            }
-        },
-        "v1.QueryOfflineMessageReq": {
-            "type": "object",
-            "properties": {
-                "last_msg_seq": {
-                    "type": "string"
-                },
-                "onlyCount": {
-                    "type": "boolean"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.QueryOfflineMessageResp": {
-            "type": "object",
-            "properties": {
-                "messages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.BriefMessage"
-                    }
-                },
-                "response": {
-                    "$ref": "#/definitions/response.BaseResponse"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.QueryRequestForSwagger": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "description": "Email and Phone only one can be set",
-                    "type": "string",
-                    "example": "user1@example.com"
-                },
-                "phone": {
-                    "type": "string",
-                    "example": "13800138000"
-                }
-            }
-        },
-        "v1.RemoveGroupMemberRequest": {
-            "type": "object",
-            "properties": {
-                "gid": {
-                    "type": "string"
-                },
-                "uid": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "v1.SendMessageReq": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "content_type": {
-                    "type": "integer"
-                },
-                "from_user": {
-                    "type": "string"
-                },
-                "to_user": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.SendMessageResp": {
-            "type": "object",
-            "properties": {
-                "msg_seq": {
-                    "type": "string"
-                },
-                "response": {
-                    "$ref": "#/definitions/response.BaseResponse"
-                },
-                "session_id": {
-                    "description": "MsgSeq is unique seq of a message",
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.UpdateGroupRequest": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "gid": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "uid": {
-                    "description": "current user id",
-                    "type": "string"
-                }
-            }
-        },
-        "v1.UpdateUserRequest": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "uid": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.User": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "connect_url": {
-                    "description": "ws_url is url of user need connect via ws or tcp",
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "login_status": {
-                    "description": "0: first time login, need connect to push server\n1: already login, no need connect to push server",
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "uid": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.leaveGroupRequest": {
-            "type": "object",
-            "required": [
-                "gid"
-            ],
-            "properties": {
-                "gid": {
                     "type": "string"
                 }
             }

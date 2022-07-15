@@ -1,13 +1,360 @@
 basePath: /gateway/v1
 definitions:
-  response.BaseResponse:
+  dto.BaseFriendRequest:
     properties:
-      code:
+      friendUid:
+        example: av8FMdRdcb
+        type: string
+    required:
+    - friendUid
+    type: object
+  dto.ChangeGroupMemberRequest:
+    properties:
+      gid:
+        example: av8FMdRdcb
+        type: string
+      uids:
+        example:
+        - av8FMdRdcb
+        - av8FMdRdcc
+        items:
+          type: string
+        maxItems: 20
+        minItems: 1
+        type: array
+    required:
+    - gid
+    - uids
+    type: object
+  dto.ChangeGroupMemberResponse:
+    properties:
+      count:
+        example: 1
         type: integer
-      message:
+    type: object
+  dto.ConfirmFriendRequestRequest:
+    properties:
+      friendRequestId:
+        example: 2
+        type: integer
+    required:
+    - friendRequestId
+    type: object
+  dto.CreateGroupRequest:
+    properties:
+      avatar:
+        example: https://example.com/avatar.png
         type: string
-      reason:
+      desc:
+        example: test
+        maxLength: 128
         type: string
+      members:
+        example:
+        - av8FMdRdcb
+        - av8FMdRdcc
+        items:
+          type: string
+        maxItems: 20
+        minItems: 2
+        type: array
+      name:
+        example: test
+        maxLength: 32
+        type: string
+    required:
+    - members
+    - name
+    type: object
+  dto.CreateUserRequest:
+    properties:
+      email:
+        description: Email and Phone only one can be set
+        example: user1@example.com
+        type: string
+      name:
+        example: user1
+        maxLength: 32
+        minLength: 2
+        type: string
+      password:
+        example: "123456"
+        maxLength: 20
+        minLength: 6
+        type: string
+      phone:
+        example: "13800138000"
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  dto.DeleteGroupRequest:
+    properties:
+      gid:
+        example: av8FMdRdcb
+        type: string
+    required:
+    - gid
+    type: object
+  dto.Friend:
+    properties:
+      createdAt:
+        example: 1579098983
+        type: integer
+      friendAvatar:
+        example: https://www.example.com/friendAvatar.png
+        type: string
+      friendName:
+        example: friendName
+        type: string
+      friendUid:
+        example: av8FMdRdcb
+        type: string
+      status:
+        description: '0: friend, 1: stranger, 2: blacklist'
+        example: 0
+        type: integer
+      uid:
+        example: av8FMdRdcb
+        type: string
+      updatedAt:
+        example: 1579098983
+        type: integer
+    type: object
+  dto.FriendRequest:
+    properties:
+      createdAt:
+        example: 1579098983
+        type: integer
+      friendAvatar:
+        example: https://www.example.com/friendAvatar.png
+        type: string
+      friendName:
+        example: friendName
+        type: string
+      friendUid:
+        example: av8FMdRdcb
+        type: string
+      id:
+        example: 1
+        type: integer
+      status:
+        description: '0: pending, 1: accepted, 2: rejected'
+        example: 0
+        type: integer
+      uid:
+        example: av8FMdRdcb
+        type: string
+      updatedAt:
+        example: 1579098983
+        type: integer
+    type: object
+  dto.Group:
+    properties:
+      avatar:
+        example: https://example.com/avatar.png
+        type: string
+      desc:
+        example: test
+        type: string
+      gid:
+        example: av8FMdRdcb
+        type: string
+      max_member:
+        example: 20
+        type: integer
+      member_count:
+        example: 2
+        type: integer
+      members:
+        items:
+          $ref: '#/definitions/dto.GroupMember'
+        type: array
+      name:
+        example: test
+        type: string
+      owner:
+        $ref: '#/definitions/dto.GroupMember'
+      owner_uid:
+        example: av8FMdRdcb
+        type: string
+      status:
+        example: 1
+        type: integer
+    type: object
+  dto.GroupMember:
+    properties:
+      gid:
+        example: av8FMdRdcb
+        type: string
+      status:
+        description: '0: normal, 1: silent'
+        example: 1
+        type: integer
+      type:
+        description: '0: owner, 1: member'
+        example: 1
+        type: integer
+      uid:
+        example: av8FMdRdcb
+        type: string
+      user:
+        $ref: '#/definitions/dto.User'
+        description: only when withMembers is true and withInfo is true
+    type: object
+  dto.Message:
+    properties:
+      content:
+        example: hello
+        type: string
+      contentType:
+        example: 1
+        type: integer
+      createTime:
+        example: 1579098983
+        type: integer
+      from:
+        example: av8FMdRdcb
+        type: string
+      messageId:
+        example: 1
+        type: integer
+      sessionId:
+        example: "1"
+        type: string
+      sessionType:
+        example: 1
+        type: integer
+      to:
+        example: av8FMdRdcb
+        type: string
+    type: object
+  dto.SendMessageReq:
+    properties:
+      content:
+        example: hello
+        type: string
+      contentType:
+        example: 1
+        type: integer
+      from:
+        example: av8FMdRdcb
+        type: string
+      sessionId:
+        example: "1"
+        type: string
+      sessionType:
+        example: 1
+        type: integer
+      to:
+        example: av8FMdRdcb
+        type: string
+    required:
+    - content
+    - contentType
+    - from
+    - sessionId
+    - sessionType
+    - to
+    type: object
+  dto.SendMessageResp:
+    properties:
+      messageId:
+        example: 1
+        type: integer
+      sessionId:
+        example: abc
+        type: string
+    type: object
+  dto.UpdateGroupRequest:
+    properties:
+      avatar:
+        example: https://www.example.com/avatar.png
+        type: string
+      desc:
+        example: test
+        maxLength: 128
+        type: string
+      gid:
+        example: av8FMdRdcb
+        type: string
+      name:
+        example: test
+        maxLength: 32
+        type: string
+    required:
+    - gid
+    type: object
+  dto.UpdateUserRequest:
+    properties:
+      avatar:
+        example: https://www.example.com/avatar.png
+        type: string
+      email:
+        example: user1@example.com
+        type: string
+      name:
+        example: user1
+        maxLength: 32
+        minLength: 2
+        type: string
+      password:
+        example: "123456"
+        maxLength: 20
+        minLength: 6
+        type: string
+      phone:
+        example: "13800138000"
+        type: string
+    type: object
+  dto.User:
+    properties:
+      avatar:
+        example: https://www.example.com/avatar.png
+        type: string
+      connectUrl:
+        example: ws://10.0.0.1:8080/ws
+        type: string
+      email:
+        example: abc@example.com
+        type: string
+      loginStatus:
+        example: 0
+        type: integer
+      name:
+        example: user1
+        type: string
+      phone:
+        example: "13800138000"
+        type: string
+      uid:
+        example: av8FMdRdcb
+        type: string
+    type: object
+  dto.UserLoginRequest:
+    properties:
+      email:
+        description: Email and Phone only one can be set
+        example: user1@example.com
+        type: string
+      loginType:
+        enum:
+        - 0
+        - 1
+        example: 0
+        type: integer
+      password:
+        example: "123456"
+        maxLength: 20
+        minLength: 6
+        type: string
+      phone:
+        example: "13800138000"
+        type: string
+    required:
+    - loginType
+    - password
     type: object
   response.Meta:
     properties:
@@ -16,8 +363,12 @@ definitions:
           type: string
         type: object
       page:
+        example: 1
+        minimum: 1
         type: integer
-      page_size:
+      pageSize:
+        example: 10
+        minimum: 1
         type: integer
       total:
         type: integer
@@ -33,307 +384,6 @@ definitions:
         $ref: '#/definitions/response.Meta'
       reason:
         type: string
-    type: object
-  v1.AddFriendRequest:
-    properties:
-      friend_uid:
-        type: string
-      uid:
-        type: string
-    type: object
-  v1.AddFriendResult:
-    properties:
-      friend_request:
-        $ref: '#/definitions/v1.FriendRequest'
-      status:
-        type: integer
-    type: object
-  v1.AddGroupMemberRequest:
-    properties:
-      gid:
-        type: string
-      uid:
-        items:
-          type: string
-        type: array
-    type: object
-  v1.BaseFriendRequest:
-    properties:
-      friend_uid:
-        type: string
-      uid:
-        type: string
-    type: object
-  v1.BriefMessage:
-    properties:
-      content:
-        type: string
-      content_type:
-        type: integer
-      from_user:
-        type: string
-      msg_seq:
-        type: string
-      session_id:
-        type: integer
-      to_user:
-        type: string
-    type: object
-  v1.ConfirmFriendRequestReq:
-    properties:
-      action:
-        type: integer
-      friend_request_id:
-        type: integer
-      uid:
-        type: string
-    type: object
-  v1.CreateGroupRequest:
-    properties:
-      avatar:
-        type: string
-      description:
-        type: string
-      members_uid:
-        description: 'todo: limit to small number'
-        items:
-          type: string
-        type: array
-      name:
-        type: string
-      owner_uid:
-        type: string
-    type: object
-  v1.CreateUserRequest:
-    properties:
-      name:
-        type: string
-      password:
-        type: string
-      user:
-        description: "Types that are assignable to User:\n\t*CreateUserRequest_Email\n\t*CreateUserRequest_Phone"
-    type: object
-  v1.DeleteGroupRequest:
-    properties:
-      gid:
-        type: string
-      uid:
-        type: string
-    type: object
-  v1.Friend:
-    properties:
-      created_at:
-        type: integer
-      friend_avatar:
-        type: string
-      friend_name:
-        type: string
-      friend_uid:
-        type: string
-      status:
-        type: integer
-      uid:
-        type: string
-      updated_at:
-        type: integer
-    type: object
-  v1.FriendRequest:
-    properties:
-      created_at:
-        type: integer
-      friend_avatar:
-        type: string
-      friend_name:
-        description: friend info for view
-        type: string
-      friend_uid:
-        type: string
-      id:
-        type: integer
-      status:
-        type: integer
-      uid:
-        type: string
-      updated_at:
-        type: integer
-    type: object
-  v1.Group:
-    properties:
-      avatar:
-        type: string
-      description:
-        type: string
-      gid:
-        type: string
-      id:
-        type: integer
-      max_members:
-        type: integer
-      member_count:
-        type: integer
-      members:
-        items:
-          $ref: '#/definitions/v1.GroupMember'
-        type: array
-      name:
-        type: string
-      owner:
-        $ref: '#/definitions/v1.GroupMember'
-      owner_uid:
-        type: string
-      status:
-        type: integer
-    type: object
-  v1.GroupMember:
-    properties:
-      gid:
-        type: string
-      id:
-        description: use as session id
-        type: integer
-      status:
-        type: integer
-      type:
-        type: integer
-      uid:
-        type: string
-      user:
-        $ref: '#/definitions/v1.User'
-    type: object
-  v1.LoginRequestForSwagger:
-    properties:
-      email:
-        description: Email and Phone only one can be set
-        example: user1@example.com
-        type: string
-      loginType:
-        example: 0
-        type: integer
-      password:
-        example: "123456"
-        type: string
-      phone:
-        example: "13800138000"
-        type: string
-    type: object
-  v1.QueryOfflineMessageReq:
-    properties:
-      last_msg_seq:
-        type: string
-      onlyCount:
-        type: boolean
-      page:
-        type: integer
-      page_size:
-        type: integer
-      user_id:
-        type: string
-    type: object
-  v1.QueryOfflineMessageResp:
-    properties:
-      messages:
-        items:
-          $ref: '#/definitions/v1.BriefMessage'
-        type: array
-      response:
-        $ref: '#/definitions/response.BaseResponse'
-      total:
-        type: integer
-    type: object
-  v1.QueryRequestForSwagger:
-    properties:
-      email:
-        description: Email and Phone only one can be set
-        example: user1@example.com
-        type: string
-      phone:
-        example: "13800138000"
-        type: string
-    type: object
-  v1.RemoveGroupMemberRequest:
-    properties:
-      gid:
-        type: string
-      uid:
-        items:
-          type: string
-        type: array
-    type: object
-  v1.SendMessageReq:
-    properties:
-      content:
-        type: string
-      content_type:
-        type: integer
-      from_user:
-        type: string
-      to_user:
-        type: string
-    type: object
-  v1.SendMessageResp:
-    properties:
-      msg_seq:
-        type: string
-      response:
-        $ref: '#/definitions/response.BaseResponse'
-      session_id:
-        description: MsgSeq is unique seq of a message
-        type: integer
-    type: object
-  v1.UpdateGroupRequest:
-    properties:
-      avatar:
-        type: string
-      description:
-        type: string
-      gid:
-        type: string
-      name:
-        type: string
-      uid:
-        description: current user id
-        type: string
-    type: object
-  v1.UpdateUserRequest:
-    properties:
-      avatar:
-        type: string
-      email:
-        type: string
-      name:
-        type: string
-      phone:
-        type: string
-      uid:
-        type: string
-    type: object
-  v1.User:
-    properties:
-      avatar:
-        type: string
-      connect_url:
-        description: ws_url is url of user need connect via ws or tcp
-        type: string
-      email:
-        type: string
-      login_status:
-        description: |-
-          0: first time login, need connect to push server
-          1: already login, no need connect to push server
-        type: integer
-      name:
-        type: string
-      phone:
-        type: string
-      uid:
-        type: string
-    type: object
-  v1.leaveGroupRequest:
-    properties:
-      gid:
-        type: string
-    required:
-    - gid
     type: object
 info:
   contact:
@@ -387,14 +437,19 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.CreateGroupRequest'
+          $ref: '#/definitions/dto.CreateGroupRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/v1.Group'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.Group'
+              type: object
         "400":
           description: Bad Request
           schema:
@@ -418,7 +473,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.DeleteGroupRequest'
+          $ref: '#/definitions/dto.DeleteGroupRequest'
       produces:
       - application/json
       responses:
@@ -453,17 +508,26 @@ paths:
         in: query
         name: with_members
         type: boolean
+      - description: 是否获取群组信息
+        in: query
+        name: with_info
+        type: boolean
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/v1.Group'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.Group'
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
       summary: 获取群组信息
       tags:
       - 群组
@@ -497,7 +561,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/v1.Group'
+                    $ref: '#/definitions/dto.Group'
                   type: array
               type: object
         "400":
@@ -523,14 +587,19 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.AddGroupMemberRequest'
+          $ref: '#/definitions/dto.ChangeGroupMemberRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/response.Response'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ChangeGroupMemberResponse'
+              type: object
         "400":
           description: Bad Request
           schema:
@@ -554,7 +623,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.leaveGroupRequest'
+          $ref: '#/definitions/dto.ChangeGroupMemberRequest'
       produces:
       - application/json
       responses:
@@ -585,14 +654,19 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.RemoveGroupMemberRequest'
+          $ref: '#/definitions/dto.ChangeGroupMemberRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/response.Response'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ChangeGroupMemberResponse'
+              type: object
         "400":
           description: Bad Request
           schema:
@@ -616,14 +690,19 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.UpdateGroupRequest'
+          $ref: '#/definitions/dto.UpdateGroupRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/v1.Group'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.Group'
+              type: object
         "400":
           description: Bad Request
           schema:
@@ -647,18 +726,23 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/v1.SendMessageReq'
+          $ref: '#/definitions/dto.SendMessageReq'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SendMessageResp'
+              type: object
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            type: "null"
       summary: 发送广播消息
       tags:
       - message
@@ -678,44 +762,72 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/v1.SendMessageReq'
+          $ref: '#/definitions/dto.SendMessageReq'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SendMessageResp'
+              type: object
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            type: "null"
       summary: 发送单聊消息
       tags:
       - message
   /offline_message/query:
-    post:
+    get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: 查询离线消息
       parameters:
-      - description: req
-        in: body
-        name: req
+      - description: token
+        in: header
+        name: Authorization
         required: true
-        schema:
-          $ref: '#/definitions/v1.QueryOfflineMessageReq'
+        type: string
+      - description: lastMessageId
+        in: query
+        name: lastMessageId
+        required: true
+        type: integer
+      - description: onlyCount
+        in: query
+        name: onlyCount
+        type: boolean
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: pageSize
+        in: query
+        name: pageSize
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.Message'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            type: "null"
       summary: 查询离线消息
       tags:
       - offline_message
@@ -735,18 +847,18 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.ConfirmFriendRequestReq'
+          $ref: '#/definitions/dto.ConfirmFriendRequestRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
         "400":
-          description: err
+          description: error
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
       summary: 接受好友请求
       tags:
       - 好友
@@ -766,18 +878,25 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.AddFriendRequest'
+          $ref: '#/definitions/dto.BaseFriendRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
-            $ref: '#/definitions/v1.AddFriendResult'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.FriendRequest'
+                  type: array
+              type: object
         "400":
-          description: err
+          description: error
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
       summary: 添加好友
       tags:
       - 好友
@@ -797,18 +916,18 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.BaseFriendRequest'
+          $ref: '#/definitions/dto.BaseFriendRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
         "400":
-          description: err
+          description: error
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
       summary: 屏蔽好友
       tags:
       - 好友
@@ -828,18 +947,18 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.BaseFriendRequest'
+          $ref: '#/definitions/dto.BaseFriendRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
         "400":
-          description: err
+          description: error
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
       summary: 删除好友
       tags:
       - 好友
@@ -852,6 +971,14 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: size
+        in: query
+        name: size
+        type: integer
       produces:
       - application/json
       responses:
@@ -863,7 +990,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/v1.Friend'
+                    $ref: '#/definitions/dto.Friend'
                   type: array
               type: object
         "400":
@@ -889,18 +1016,18 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.ConfirmFriendRequestReq'
+          $ref: '#/definitions/dto.ConfirmFriendRequestRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
         "400":
-          description: err
+          description: error
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
       summary: 拒绝好友请求
       tags:
       - 好友
@@ -913,13 +1040,32 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: size
+        in: query
+        name: size
+        type: integer
+      - description: status
+        in: query
+        name: status
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/response.Response'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.FriendRequest'
+                  type: array
+              type: object
         "400":
           description: err
           schema:
@@ -943,18 +1089,18 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1.BaseFriendRequest'
+          $ref: '#/definitions/dto.BaseFriendRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
         "400":
-          description: err
+          description: error
           schema:
-            $ref: '#/definitions/response.BaseResponse'
+            $ref: '#/definitions/response.Response'
       summary: 取消屏蔽好友
       tags:
       - 好友
@@ -969,43 +1115,55 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/v1.LoginRequestForSwagger'
+          $ref: '#/definitions/dto.UserLoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
-          headers:
-            Authorization:
-              description: 'Bearer '
-              type: string
           schema:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/v1.User'
+                  $ref: '#/definitions/dto.User'
               type: object
       summary: 登录
       tags:
       - 用户
   /user/query:
-    post:
+    get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: 查询用户信息
       parameters:
-      - description: req
-        in: body
-        name: req
+      - description: token
+        in: header
+        name: Authorization
         required: true
-        schema:
-          $ref: '#/definitions/v1.QueryRequestForSwagger'
+        type: string
+      - description: email
+        in: query
+        name: email
+        type: string
+      - description: phone
+        in: query
+        name: Phone
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.User'
+              type: object
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
       summary: 查询用户信息
@@ -1022,12 +1180,21 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/v1.CreateUserRequest'
+          $ref: '#/definitions/dto.CreateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.User'
+              type: object
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
       summary: 注册
@@ -1044,12 +1211,21 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/v1.UpdateUserRequest'
+          $ref: '#/definitions/dto.UpdateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.User'
+              type: object
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
       summary: 更新用户信息

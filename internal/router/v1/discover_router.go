@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/go-goim/core/pkg/mid"
-	"github.com/go-goim/core/pkg/response"
 	"github.com/go-goim/core/pkg/router"
+	"github.com/go-goim/core/pkg/web/response"
 
 	"github.com/go-goim/gateway/internal/service"
 )

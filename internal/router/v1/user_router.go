@@ -3,12 +3,11 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 
-	userv1 "github.com/go-goim/api/user/v1"
+	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/core/pkg/mid"
-	"github.com/go-goim/core/pkg/request"
-	"github.com/go-goim/core/pkg/response"
 	"github.com/go-goim/core/pkg/router"
+	"github.com/go-goim/core/pkg/web/response"
 
 	"github.com/go-goim/gateway/internal/service"
 )
@@ -27,30 +26,31 @@ func (r *UserRouter) Load(router *gin.RouterGroup) {
 	friend := NewFriendRouter()
 	friend.Load(router.Group("/friend", mid.AuthJwt))
 
-	router.POST("/query", mid.AuthJwt, r.queryUser)
+	auth := router.Group("", mid.AuthJwt)
+	{
+		auth.GET("/query", r.queryUser)
+		auth.POST("/update", r.updateUserInfo)
+	}
+
+	// no auth
 	router.POST("/login", r.login)
 	router.POST("/register", r.register)
-	router.POST("/update", mid.AuthJwt, r.updateUserInfo)
-}
-
-type QueryRequestForSwagger struct {
-	// Email and Phone only one can be set
-	Email *string `json:"email" example:"user1@example.com"`
-	Phone *string `json:"phone" example:"13800138000"`
 }
 
 // @Summary 查询用户信息
 // @Description 查询用户信息
 // @Tags 用户
-// @Accept json
+// @Accept x-www-form-urlencoded
 // @Produce json
-// @Param   req body QueryRequestForSwagger true "req"
-// @Success 200 {object} response.Response{data=userv1.User}
-// @Failure 200 {object} response.Response
-// @Router /user/query [post]
+// @Param Authorization header string true "token"
+// @Param email query string false "email"
+// @Param Phone query string false "phone"
+// @Success 200 {object} response.Response{data=dto.User}
+// @Failure 400 {object} response.Response
+// @Router /user/query [get]
 func (r *UserRouter) queryUser(c *gin.Context) {
-	var req = &userv1.QueryUserRequest{}
-	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
+	var req = &dto.QueryUserRequest{}
+	if err := c.ShouldBindQuery(req); err != nil {
 		response.ErrorResp(c, err)
 		return
 	}
@@ -64,26 +64,18 @@ func (r *UserRouter) queryUser(c *gin.Context) {
 	response.SuccessResp(c, user)
 }
 
-type LoginRequestForSwagger struct {
-	// Email and Phone only one can be set
-	Email     *string `json:"email" example:"user1@example.com"`
-	Phone     *string `json:"phone" example:"13800138000"`
-	Password  string  `json:"password" example:"123456"`
-	LoginType int     `json:"loginType" example:"0"`
-}
-
 // @Summary 登录
 // @Description 用户登录
 // @Tags 用户
 // @Accept json
 // @Produce json
-// @Param   req body LoginRequestForSwagger true "req"
-// @Success 200 {object} response.Response{data=userv1.User}
-// @Header  200 {string} Authorization "Bearer "
+// @Param   req body dto.UserLoginRequest true "req"
+// @Success 200 {object} response.Response{data=dto.User}
+// @Header  400 {string} Authorization "Bearer "
 // @Router /user/login [post]
 func (r *UserRouter) login(c *gin.Context) {
-	var req = &userv1.UserLoginRequest{}
-	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
+	var req = &dto.UserLoginRequest{}
+	if err := c.ShouldBindJSON(req); err != nil {
 		response.ErrorResp(c, err)
 		return
 	}
@@ -94,7 +86,7 @@ func (r *UserRouter) login(c *gin.Context) {
 		return
 	}
 
-	if err = mid.SetJwtToHeader(c, user.Uid); err != nil {
+	if err = mid.SetJwtToHeader(c, user.UID.Int64()); err != nil {
 		response.ErrorResp(c, err)
 		return
 	}
@@ -107,13 +99,13 @@ func (r *UserRouter) login(c *gin.Context) {
 // @Tags 用户
 // @Accept json
 // @Produce json
-// @Param   req body userv1.CreateUserRequest true "req"
-// @Success 200 {object} userv1.User
-// @Failure 200 {object} response.Response
+// @Param   req body dto.CreateUserRequest true "req"
+// @Success 200 {object} response.Response{data=dto.User}
+// @Failure 400 {object} response.Response
 // @Router /user/register [post]
 func (r *UserRouter) register(c *gin.Context) {
-	var req = &userv1.CreateUserRequest{}
-	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
+	var req = &dto.CreateUserRequest{}
+	if err := c.ShouldBindJSON(req); err != nil {
 		response.ErrorResp(c, err)
 		return
 	}
@@ -132,13 +124,13 @@ func (r *UserRouter) register(c *gin.Context) {
 // @Tags 用户
 // @Accept json
 // @Produce json
-// @Param   req body userv1.UpdateUserRequest true "req"
-// @Success 200 {object} userv1.User
-// @Failure 200 {object} response.Response
+// @Param   req body dto.UpdateUserRequest true "req"
+// @Success 200 {object} response.Response{data=dto.User}
+// @Failure 400 {object} response.Response
 // @Router /user/update [post]
 func (r *UserRouter) updateUserInfo(c *gin.Context) {
-	var req = &userv1.UpdateUserRequest{}
-	if err := c.ShouldBindWith(req, &request.PbJSONBinding{}); err != nil {
+	var req = &dto.UpdateUserRequest{}
+	if err := c.ShouldBindJSON(req); err != nil {
 		response.ErrorResp(c, err)
 		return
 	}
