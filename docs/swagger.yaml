@@ -746,43 +746,7 @@ paths:
       summary: 发送广播消息
       tags:
       - message
-  /message/send_msg:
-    post:
-      consumes:
-      - application/json
-      description: 发送单聊消息
-      parameters:
-      - description: token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: req
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/dto.SendMessageReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Success
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.SendMessageResp'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 发送单聊消息
-      tags:
-      - message
-  /offline_message/query:
+  /message/offline/query:
     get:
       consumes:
       - application/x-www-form-urlencoded
@@ -831,6 +795,42 @@ paths:
       summary: 查询离线消息
       tags:
       - offline_message
+  /message/send_msg:
+    post:
+      consumes:
+      - application/json
+      description: 发送单聊消息
+      parameters:
+      - description: token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: req
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SendMessageReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SendMessageResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 发送单聊消息
+      tags:
+      - message
   /user/friend/accept:
     post:
       consumes:

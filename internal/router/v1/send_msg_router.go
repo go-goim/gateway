@@ -25,7 +25,7 @@ func NewMsgRouter() *MsgRouter {
 func (r *MsgRouter) Load(g *gin.RouterGroup) {
 	g.Use(mid.AuthJwt)
 	offline := NewOfflineMessageRouter()
-	offline.Load(g.Group("/offline_msg"))
+	offline.Load(g.Group("/offline"))
 
 	g.POST("/send_msg", r.handleSendSingleUserMsg)
 	g.POST("/broadcast", r.handleSendBroadcastMsg)

@@ -39,7 +39,7 @@ func (r *OfflineMessageRouter) Load(g *gin.RouterGroup) {
 // @Param pageSize query integer false "pageSize"
 // @Success 200 {object} response.Response{data=[]dto.Message} "Success"
 // @Failure 400 {object} response.Response "Bad Request"
-// @Router /offline_message/query [get]
+// @Router /message/offline/query [get]
 func (r *OfflineMessageRouter) handleQueryOfflineMessage(c *gin.Context) {
 	req := new(dto.QueryOfflineMessageReq)
 	if err := c.ShouldBindQuery(req); err != nil {
