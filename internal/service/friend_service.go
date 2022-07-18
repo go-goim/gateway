@@ -92,7 +92,7 @@ func (s *FriendService) confirmFriendRequest(ctx context.Context, req *dto.Confi
  * Friend Logic
  */
 
-func (s *FriendService) ListUserRelation(ctx context.Context, uid *types.ID, paging *web.Paging) (
+func (s *FriendService) ListUserRelation(ctx context.Context, uid types.ID, paging *web.Paging) (
 	[]*friendpb.Friend, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {

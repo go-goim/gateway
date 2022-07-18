@@ -238,7 +238,7 @@ func (r *GroupRouter) leaveGroup(c *gin.Context) {
 	}
 
 	req.UID = mid.GetUID(c)
-	req.UIDs = []*types.ID{req.UID}
+	req.UIDs = []types.ID{req.UID}
 	cnt, err := service.GetGroupService().RemoveGroupMember(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)

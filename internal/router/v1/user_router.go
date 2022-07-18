@@ -86,7 +86,7 @@ func (r *UserRouter) login(c *gin.Context) {
 		return
 	}
 
-	if err = mid.SetJwtToHeader(c, user.UID.Int64()); err != nil {
+	if err = mid.SetJwtToHeader(c, user.UID); err != nil {
 		response.ErrorResp(c, err)
 		return
 	}

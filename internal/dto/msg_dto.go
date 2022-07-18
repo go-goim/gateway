@@ -7,12 +7,12 @@ import (
 )
 
 type SendMessageReq struct {
-	From        *types.ID `json:"from" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
-	To          *types.ID `json:"to" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
-	SessionType int32     `json:"sessionType" validate:"required" example:"1"`
-	SessionID   *string   `json:"sessionId" validate:"required" example:"1"`
-	ContentType int32     `json:"contentType" validate:"required" example:"1"`
-	Content     string    `json:"content" validate:"required" example:"hello"`
+	From        types.ID `json:"from" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	To          types.ID `json:"to" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	SessionType int32    `json:"sessionType" validate:"required" example:"1"`
+	SessionID   *string  `json:"sessionId" validate:"required" example:"1"`
+	ContentType int32    `json:"contentType" validate:"required" example:"1"`
+	Content     string   `json:"content" validate:"required" example:"hello"`
 }
 
 func (r *SendMessageReq) ToPb() *messagev1.SendMessageReq {
@@ -32,29 +32,22 @@ type SendMessageResp struct {
 	SessionID string `json:"sessionId" example:"abc"`
 }
 
-func SendMessageRespFromPb(pb *messagev1.SendMessageResp) *SendMessageResp {
-	return &SendMessageResp{
-		MessageID: pb.GetMsgId(),
-		SessionID: pb.GetSessionId(),
-	}
-}
-
 type Message struct {
-	MessageID   int64     `json:"messageId" example:"1"`
-	From        *types.ID `json:"from" swaggertype:"string" example:"av8FMdRdcb"`
-	To          *types.ID `json:"to" swaggertype:"string" example:"av8FMdRdcb"`
-	SessionType int32     `json:"sessionType" example:"1"`
-	SessionID   string    `json:"sessionId" example:"1"`
-	ContentType int32     `json:"contentType" example:"1"`
-	Content     string    `json:"content" example:"hello"`
-	CreateTime  int64     `json:"createTime" example:"1579098983"`
+	MessageID   int64    `json:"messageId" example:"1"`
+	From        types.ID `json:"from" swaggertype:"string" example:"av8FMdRdcb"`
+	To          types.ID `json:"to" swaggertype:"string" example:"av8FMdRdcb"`
+	SessionType int32    `json:"sessionType" example:"1"`
+	SessionID   string   `json:"sessionId" example:"1"`
+	ContentType int32    `json:"contentType" example:"1"`
+	Content     string   `json:"content" example:"hello"`
+	CreateTime  int64    `json:"createTime" example:"1579098983"`
 }
 
 func MessageFromPb(pb *messagev1.Message) *Message {
 	return &Message{
 		MessageID:   pb.GetMsgId(),
-		From:        types.NewID(pb.GetFrom()),
-		To:          types.NewID(pb.GetTo()),
+		From:        types.ID(pb.GetFrom()),
+		To:          types.ID(pb.GetTo()),
 		SessionType: int32(pb.GetSessionType()),
 		SessionID:   pb.GetSessionId(),
 		ContentType: int32(pb.GetContentType()),
@@ -72,9 +65,9 @@ func MessagesFromPb(pb []*messagev1.Message) []*Message {
 }
 
 type QueryOfflineMessageReq struct {
-	UID           *types.ID `form:"-"`
-	LastMessageID int64     `form:"lastMessageId" validate:"required" example:"1"`
-	OnlyCount     bool      `form:"onlyCount" example:"true"`
+	UID           types.ID `form:"-"`
+	LastMessageID int64    `form:"lastMessageId" validate:"required" example:"1"`
+	OnlyCount     bool     `form:"onlyCount" example:"true"`
 	*web.Paging
 }
 

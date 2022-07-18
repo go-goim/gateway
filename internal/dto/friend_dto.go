@@ -19,8 +19,8 @@ func AddFriendResultFromPb(pb *friendv1.AddFriendResult) *AddFriendResult {
 }
 
 type BaseFriendRequest struct {
-	UID       *types.ID `json:"-"` // no validation
-	FriendUID *types.ID `json:"friendUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	UID       types.ID `json:"-"` // no validation
+	FriendUID types.ID `json:"friendUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
 }
 
 func (r *BaseFriendRequest) ToPb() *friendv1.BaseFriendRequest {
@@ -32,9 +32,9 @@ func (r *BaseFriendRequest) ToPb() *friendv1.BaseFriendRequest {
 }
 
 type ConfirmFriendRequestRequest struct {
-	UID             *types.ID `json:"-"`
-	FriendRequestID uint64    `json:"friendRequestId" validate:"required" example:"2"`
-	Action          int32     `json:"-"`
+	UID             types.ID `json:"-"`
+	FriendRequestID uint64   `json:"friendRequestId" validate:"required" example:"2"`
+	Action          int32    `json:"-"`
 }
 
 func (r *ConfirmFriendRequestRequest) ToPb() *friendv1.ConfirmFriendRequestRequest {
@@ -47,8 +47,8 @@ func (r *ConfirmFriendRequestRequest) ToPb() *friendv1.ConfirmFriendRequestReque
 }
 
 type QueryFriendRequestListRequest struct {
-	UID    *types.ID `json:"-" form:"-"`
-	Status int32     `form:"status" validate:"required,oneof=0 1" example:"0"`
+	UID    types.ID `json:"-" form:"-"`
+	Status int32    `form:"status" validate:"required,oneof=0 1" example:"0"`
 }
 
 func (r *QueryFriendRequestListRequest) ToPb() *friendv1.QueryFriendRequestListRequest {
@@ -60,9 +60,9 @@ func (r *QueryFriendRequestListRequest) ToPb() *friendv1.QueryFriendRequestListR
 }
 
 type UpdateFriendStatusRequest struct {
-	UID       *types.ID `json:"uid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
-	FriendUID *types.ID `json:"friendUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
-	Status    int32     `json:"status" validate:"required,oneof=0 1 2 3" example:"0"`
+	UID       types.ID `json:"uid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	FriendUID types.ID `json:"friendUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	Status    int32    `json:"status" validate:"required,oneof=0 1 2 3" example:"0"`
 }
 
 func (r *UpdateFriendStatusRequest) ToPb() *friendv1.UpdateFriendStatusRequest {
@@ -77,9 +77,9 @@ func (r *UpdateFriendStatusRequest) ToPb() *friendv1.UpdateFriendStatusRequest {
 }
 
 type CheckSendMessageAbilityRequest struct {
-	FromUID     *types.ID `json:"fromUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
-	ToUID       *types.ID `json:"toUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
-	SessionType int32     `json:"sessionType" validate:"required,gte=0,lte=255" example:"0"`
+	FromUID     types.ID `json:"fromUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	ToUID       types.ID `json:"toUid" validate:"required" swaggertype:"string" example:"av8FMdRdcb"`
+	SessionType int32    `json:"sessionType" validate:"required,gte=0,lte=255" example:"0"`
 }
 
 func (r *CheckSendMessageAbilityRequest) ToPb() *friendv1.CheckSendMessageAbilityRequest {
@@ -92,11 +92,11 @@ func (r *CheckSendMessageAbilityRequest) ToPb() *friendv1.CheckSendMessageAbilit
 }
 
 type FriendRequest struct {
-	ID           uint64    `json:"id" example:"1"`
-	UID          *types.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
-	FriendUID    *types.ID `json:"friendUid" swaggertype:"string" example:"av8FMdRdcb"`
-	FriendName   string    `json:"friendName" example:"friendName"`
-	FriendAvatar string    `json:"friendAvatar" example:"https://www.example.com/friendAvatar.png"`
+	ID           uint64   `json:"id" example:"1"`
+	UID          types.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
+	FriendUID    types.ID `json:"friendUid" swaggertype:"string" example:"av8FMdRdcb"`
+	FriendName   string   `json:"friendName" example:"friendName"`
+	FriendAvatar string   `json:"friendAvatar" example:"https://www.example.com/friendAvatar.png"`
 	// 0: pending, 1: accepted, 2: rejected
 	Status    int32 `json:"status" example:"0"`
 	CreatedAt int64 `json:"createdAt" example:"1579098983"`
@@ -106,8 +106,8 @@ type FriendRequest struct {
 func FriendRequestFromPb(pb *friendv1.FriendRequest) *FriendRequest {
 	return &FriendRequest{
 		ID:           pb.Id,
-		UID:          types.NewID(pb.Uid),
-		FriendUID:    types.NewID(pb.FriendUid),
+		UID:          types.ID(pb.Uid),
+		FriendUID:    types.ID(pb.FriendUid),
 		FriendName:   pb.FriendName,
 		FriendAvatar: pb.FriendAvatar,
 		Status:       int32(pb.Status),
@@ -125,10 +125,10 @@ func FriendRequestListFromPb(pb []*friendv1.FriendRequest) []*FriendRequest {
 }
 
 type Friend struct {
-	UID          *types.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
-	FriendUID    *types.ID `json:"friendUid" swaggertype:"string" example:"av8FMdRdcb"`
-	FriendName   string    `json:"friendName" example:"friendName"`
-	FriendAvatar string    `json:"friendAvatar" example:"https://www.example.com/friendAvatar.png"`
+	UID          types.ID `json:"uid" swaggertype:"string" example:"av8FMdRdcb"`
+	FriendUID    types.ID `json:"friendUid" swaggertype:"string" example:"av8FMdRdcb"`
+	FriendName   string   `json:"friendName" example:"friendName"`
+	FriendAvatar string   `json:"friendAvatar" example:"https://www.example.com/friendAvatar.png"`
 	// 0: friend, 1: stranger, 2: blacklist
 	Status    int32 `json:"status" example:"0"`
 	CreatedAt int64 `json:"createdAt" example:"1579098983"`
@@ -137,8 +137,8 @@ type Friend struct {
 
 func FriendFromPb(pb *friendv1.Friend) *Friend {
 	return &Friend{
-		UID:          types.NewID(pb.Uid),
-		FriendUID:    types.NewID(pb.FriendUid),
+		UID:          types.ID(pb.Uid),
+		FriendUID:    types.ID(pb.FriendUid),
 		FriendName:   pb.FriendName,
 		FriendAvatar: pb.FriendAvatar,
 		Status:       int32(pb.Status),

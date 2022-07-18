@@ -10,7 +10,7 @@ import (
 	friendv1 "github.com/go-goim/api/user/friend/v1"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/mq"
-	"github.com/go-goim/core/pkg/util/snowflake"
+	"github.com/go-goim/core/pkg/types"
 	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/gateway/internal/app"
@@ -41,7 +41,7 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *dto.SendMessa
 		ContentType: pbReq.ContentType,
 		Content:     pbReq.Content,
 		SessionId:   sid,
-		MsgId:       snowflake.Generate().Int64(),
+		MsgId:       types.NewID().Int64(),
 		CreateTime:  time.Now().UnixMilli(),
 	}
 
@@ -84,12 +84,11 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 	return *resp.SessionId, nil
 }
 
-func (s *SendMessageService) Broadcast(ctx context.Context, req *dto.SendMessageReq) (*messagev1.SendMessageResp, error) {
-	rsp := new(messagev1.SendMessageResp)
+func (s *SendMessageService) Broadcast(ctx context.Context, req *dto.SendMessageReq) (*dto.SendMessageResp, error) {
 	pbReq := req.ToPb()
 
 	mm := &messagev1.Message{
-		MsgId: snowflake.Generate().Int64(),
+		MsgId: types.NewID().Int64(),
 		// TODO: need session id for broadcast
 		From:        pbReq.From,
 		To:          pbReq.To,
@@ -104,7 +103,9 @@ func (s *SendMessageService) Broadcast(ctx context.Context, req *dto.SendMessage
 		return nil, err
 	}
 
-	return rsp, nil
+	return &dto.SendMessageResp{
+		MessageID: mm.MsgId,
+	}, nil
 }
 
 func (s *SendMessageService) sendMessage(ctx context.Context, mm *messagev1.Message) error {
