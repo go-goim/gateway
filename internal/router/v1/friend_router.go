@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	responsepb "github.com/go-goim/api/transport/response"
+	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/core/pkg/mid"
@@ -103,6 +104,7 @@ func (r *FriendRouter) addFriend(c *gin.Context) {
 	}
 
 	req.UID = mid.GetUID(c)
+	log.Info("add friend request", "uid", req.UID, "friend_uid", req.FriendUID)
 	result, err := service.GetFriendService().AddFriend(mid.GetContext(c), req)
 	if err != nil {
 		response.ErrorResp(c, err)
