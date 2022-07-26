@@ -82,8 +82,8 @@ func (s *GroupService) ListGroup(ctx context.Context, uid types.ID, paging *web.
 
 	rsp, err := grouppb.NewGroupServiceClient(cc).ListGroups(ctx, &grouppb.ListGroupsRequest{
 		Uid:      uid.Int64(),
-		Page:     int32(paging.Page),
-		PageSize: int32(paging.PageSize),
+		Page:     paging.Page,
+		PageSize: paging.PageSize,
 	})
 	if err != nil {
 		return nil, err

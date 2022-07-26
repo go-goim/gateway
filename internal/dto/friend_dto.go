@@ -117,9 +117,9 @@ func FriendRequestFromPb(pb *friendv1.FriendRequest) *FriendRequest {
 }
 
 func FriendRequestListFromPb(pb []*friendv1.FriendRequest) []*FriendRequest {
-	var list []*FriendRequest
-	for _, v := range pb {
-		list = append(list, FriendRequestFromPb(v))
+	var list = make([]*FriendRequest, len(pb))
+	for i, v := range pb {
+		list[i] = FriendRequestFromPb(v)
 	}
 	return list
 }
@@ -148,9 +148,9 @@ func FriendFromPb(pb *friendv1.Friend) *Friend {
 }
 
 func FriendsFromPb(pb []*friendv1.Friend) []*Friend {
-	var list []*Friend
-	for _, v := range pb {
-		list = append(list, FriendFromPb(v))
+	var list = make([]*Friend, len(pb))
+	for i, v := range pb {
+		list[i] = FriendFromPb(v)
 	}
 	return list
 }

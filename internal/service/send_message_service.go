@@ -65,7 +65,7 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 	cr := &friendv1.CheckSendMessageAbilityRequest{
 		FromUid:     req.From,
 		ToUid:       req.To,
-		SessionType: messagev1.SessionType(req.SessionType),
+		SessionType: req.SessionType,
 	}
 
 	resp, err := friendv1.NewFriendServiceClient(cc).CheckSendMessageAbility(ctx, cr)
