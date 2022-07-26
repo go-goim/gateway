@@ -4,6 +4,7 @@ import (
 	"context"
 
 	messagev1 "github.com/go-goim/api/message/v1"
+	"github.com/go-goim/gateway/internal/dto"
 )
 
 type OfflineMessageService struct {
@@ -17,21 +18,21 @@ func GetOfflineMessageService() *OfflineMessageService {
 	return offlineMsgSrc
 }
 
-func (s *OfflineMessageService) QueryOfflineMsg(ctx context.Context, req *messagev1.QueryOfflineMessageReq) (
-	[]*messagev1.Message, error) {
+func (s *OfflineMessageService) QueryOfflineMsg(ctx context.Context, req *dto.QueryOfflineMessageReq) (
+	[]*dto.Message, int32, error) {
 	cc, err := msgServiceConnPool.Get()
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	rsp, err := messagev1.NewOfflineMessageServiceClient(cc).QueryOfflineMessage(ctx, req)
+	rsp, err := messagev1.NewOfflineMessageServiceClient(cc).QueryOfflineMessage(ctx, req.ToPb())
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	if !rsp.Response.Success() {
-		return nil, rsp.Response
+		return nil, 0, rsp.Response
 	}
 
-	return rsp.GetMessages(), nil
+	return dto.MessagesFromPb(rsp.Messages), rsp.GetTotal(), nil
 }

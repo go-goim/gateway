@@ -8,11 +8,10 @@ import (
 
 	messagev1 "github.com/go-goim/api/message/v1"
 	friendv1 "github.com/go-goim/api/user/friend/v1"
-	sessionv1 "github.com/go-goim/api/user/session/v1"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/mq"
-	"github.com/go-goim/core/pkg/util"
-	"github.com/go-goim/core/pkg/util/snowflake"
+	"github.com/go-goim/core/pkg/types"
+	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/gateway/internal/app"
 )
@@ -27,26 +26,23 @@ func GetSendMessageService() *SendMessageService {
 	return sendMessageService
 }
 
-func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.SendMessageReq) (*messagev1.SendMessageResp, error) {
+func (s *SendMessageService) SendMessage(ctx context.Context, req *dto.SendMessageReq) (*dto.SendMessageResp, error) {
+	pbReq := req.ToPb()
 	// check is friend
-	sid, err := s.checkCanSendMsg(ctx, req)
+	sid, err := s.checkCanSendMsg(ctx, pbReq)
 	if err != nil {
 		return nil, err
 	}
 
 	mm := &messagev1.Message{
-		From:        req.GetFrom(),
-		To:          req.GetTo(),
-		SessionType: sessionv1.SessionType_SingleChat,
-		ContentType: req.GetContentType(),
-		Content:     req.GetContent(),
+		From:        pbReq.From,
+		To:          pbReq.To,
+		SessionType: pbReq.SessionType,
+		ContentType: pbReq.ContentType,
+		Content:     pbReq.Content,
 		SessionId:   sid,
-		MsgId:       snowflake.Generate().Int64(),
+		MsgId:       types.NewID().Int64(),
 		CreateTime:  time.Now().UnixMilli(),
-	}
-
-	if util.IsGroupUID(req.GetTo()) {
-		mm.SessionType = sessionv1.SessionType_GroupChat
 	}
 
 	err = s.sendMessage(ctx, mm)
@@ -54,59 +50,51 @@ func (s *SendMessageService) SendMessage(ctx context.Context, req *messagev1.Sen
 		return nil, err
 	}
 
-	return &messagev1.SendMessageResp{
-		SessionId: sid,
-		MsgId:     mm.MsgId,
+	return &dto.SendMessageResp{
+		SessionID: sid,
+		MessageID: mm.MsgId,
 	}, nil
 }
 
-func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1.SendMessageReq) (int64, error) {
+func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1.SendMessageReq) (string, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	cr := &friendv1.CheckSendMessageAbilityRequest{
-		FromUid:     req.GetFrom(),
-		ToUid:       req.GetTo(),
-		SessionType: sessionv1.SessionType_SingleChat,
-	}
-
-	if util.IsGroupUID(req.GetTo()) {
-		cr.SessionType = sessionv1.SessionType_GroupChat
+		FromUid:     req.From,
+		ToUid:       req.To,
+		SessionType: req.SessionType,
 	}
 
 	resp, err := friendv1.NewFriendServiceClient(cc).CheckSendMessageAbility(ctx, cr)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	if !resp.Response.Success() {
-		return 0, resp.Response
+		return "", resp.Response
 	}
 
-	if resp.SessionId == nil || *resp.SessionId == 0 {
-		return 0, errors.New("session id is nil")
+	if resp.SessionId == nil || *resp.SessionId == "" {
+		return "", errors.New("session id is nil")
 	}
 
 	return *resp.SessionId, nil
 }
 
-func (s *SendMessageService) Broadcast(ctx context.Context, req *messagev1.SendMessageReq) (*messagev1.SendMessageResp, error) {
-	rsp := new(messagev1.SendMessageResp)
-	// check req params
-	if err := req.Validate(); err != nil {
-		return nil, err
-	}
+func (s *SendMessageService) Broadcast(ctx context.Context, req *dto.SendMessageReq) (*dto.SendMessageResp, error) {
+	pbReq := req.ToPb()
 
 	mm := &messagev1.Message{
-		MsgId: snowflake.Generate().Int64(),
+		MsgId: types.NewID().Int64(),
 		// TODO: need session id for broadcast
-		From:        req.GetFrom(),
-		To:          req.GetTo(),
-		SessionType: sessionv1.SessionType_Broadcast,
-		ContentType: req.GetContentType(),
-		Content:     req.GetContent(),
+		From:        pbReq.From,
+		To:          pbReq.To,
+		SessionType: messagev1.SessionType_Broadcast,
+		ContentType: pbReq.ContentType,
+		Content:     pbReq.Content,
 		CreateTime:  time.Now().UnixMilli(),
 	}
 
@@ -115,7 +103,9 @@ func (s *SendMessageService) Broadcast(ctx context.Context, req *messagev1.SendM
 		return nil, err
 	}
 
-	return rsp, nil
+	return &dto.SendMessageResp{
+		MessageID: mm.MsgId,
+	}, nil
 }
 
 func (s *SendMessageService) sendMessage(ctx context.Context, mm *messagev1.Message) error {

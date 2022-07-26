@@ -12,11 +12,13 @@ import (
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/mid"
 
+	// swagger
 	_ "github.com/swaggo/swag"
 
 	"github.com/go-goim/gateway/internal/app"
 	"github.com/go-goim/gateway/internal/router"
 
+	// register swagger
 	_ "github.com/go-goim/gateway/docs"
 )
 

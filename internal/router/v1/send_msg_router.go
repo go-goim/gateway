@@ -3,12 +3,11 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 
-	messagev1 "github.com/go-goim/api/message/v1"
 	responsepb "github.com/go-goim/api/transport/response"
 	"github.com/go-goim/core/pkg/mid"
-	"github.com/go-goim/core/pkg/request"
-	"github.com/go-goim/core/pkg/response"
 	"github.com/go-goim/core/pkg/router"
+	"github.com/go-goim/core/pkg/web/response"
+	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/gateway/internal/service"
 )
@@ -26,7 +25,7 @@ func NewMsgRouter() *MsgRouter {
 func (r *MsgRouter) Load(g *gin.RouterGroup) {
 	g.Use(mid.AuthJwt)
 	offline := NewOfflineMessageRouter()
-	offline.Load(g.Group("/offline_msg"))
+	offline.Load(g.Group("/offline"))
 
 	g.POST("/send_msg", r.handleSendSingleUserMsg)
 	g.POST("/broadcast", r.handleSendBroadcastMsg)
@@ -38,20 +37,14 @@ func (r *MsgRouter) Load(g *gin.RouterGroup) {
 // @Accept  json
 // @Produce  json
 // @Param   Authorization header string true "token"
-// @Param   req body messagev1.SendMessageReq true "req"
-// @Success 200 {object} messagev1.SendMessageResp
-// @Failure 200 {object} response.Response
-// @Failure 401 {null} null
+// @Param   req body dto.SendMessageReq true "req"
+// @Success 200 {object} response.Response{data=dto.SendMessageResp} "Success"
+// @Failure 400 {object} response.Response "Bad Request"
 // @Router /message/send_msg [post]
 func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
-	req := new(messagev1.SendMessageReq)
-	if err := c.ShouldBindWith(req, request.PbJSONBinding{}); err != nil {
-		response.ErrorResp(c, err)
-		return
-	}
-
-	if err := req.Validate(); err != nil {
-		response.ErrorResp(c, responsepb.NewBaseResponseWithMessage(responsepb.Code_InvalidParams, err.Error()))
+	req := new(dto.SendMessageReq)
+	if err := c.ShouldBindJSON(req); err != nil {
+		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
 		return
 	}
 
@@ -61,10 +54,7 @@ func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
 		return
 	}
 
-	response.SuccessResp(c, gin.H{
-		"msg_id":     rsp.GetMsgId(),
-		"session_id": rsp.GetSessionId(),
-	})
+	response.SuccessResp(c, rsp)
 }
 
 // @Summary 发送广播消息
@@ -73,15 +63,14 @@ func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param   Authorization header string true "token"
-// @Param   req body messagev1.SendMessageReq true "req"
-// @Success 200 {object} messagev1.SendMessageResp
-// @Failure 200 {object} response.Response
-// @Failure 401 {null} null
+// @Param   req body dto.SendMessageReq true "req"
+// @Success 200 {object} response.Response{data=dto.SendMessageResp} "Success"
+// @Failure 400 {object} response.Response "Bad Request"
 // @Router /message/broadcast [post]
 func (r *MsgRouter) handleSendBroadcastMsg(c *gin.Context) {
-	req := new(messagev1.SendMessageReq)
-	if err := c.ShouldBindWith(req, request.PbJSONBinding{}); err != nil {
-		response.ErrorResp(c, err)
+	req := new(dto.SendMessageReq)
+	if err := c.ShouldBindJSON(req); err != nil {
+		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
 		return
 	}
 
@@ -91,8 +80,5 @@ func (r *MsgRouter) handleSendBroadcastMsg(c *gin.Context) {
 		return
 	}
 
-	response.SuccessResp(c, gin.H{
-		"msg_id":     rsp.GetMsgId(),
-		"session_id": rsp.GetSessionId(),
-	})
+	response.SuccessResp(c, rsp)
 }

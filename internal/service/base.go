@@ -31,7 +31,7 @@ func initConnPool() error {
 			grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.UserService)),
 			grpc.WithDiscovery(app.GetApplication().Register),
 			grpc.WithTimeout(time.Second*5),
-			//grpc.WithOptions(ggrpc.WithBlock()),
+			// grpc.WithOptions(ggrpc.WithBlock()),
 		), cgrpc.WithPoolSize(2))
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func initConnPool() error {
 			grpc.WithEndpoint(fmt.Sprintf("discovery://dc1/%s", app.GetApplication().Config.SrvConfig.MsgService)),
 			grpc.WithDiscovery(app.GetApplication().Register),
 			grpc.WithTimeout(time.Second*5),
-			//grpc.WithOptions(ggrpc.WithBlock()),
+			// grpc.WithOptions(ggrpc.WithBlock()),
 		), cgrpc.WithPoolSize(2))
 	if err != nil {
 		return err

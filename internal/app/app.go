@@ -4,7 +4,7 @@ import (
 	"github.com/go-goim/core/pkg/app"
 	"github.com/go-goim/core/pkg/cmd"
 	"github.com/go-goim/core/pkg/registry"
-	"github.com/go-goim/core/pkg/util/snowflake"
+	"github.com/go-goim/core/pkg/types"
 )
 
 type Application struct {
@@ -23,7 +23,7 @@ func init() {
 }
 
 func InitApplication() (*Application, error) {
-	snowflake.SetDefaultNode(nodeBit)
+	types.SetDefaultNode(nodeBit)
 	// do some own biz logic if needed
 	a, err := app.InitApplication()
 	if err != nil {

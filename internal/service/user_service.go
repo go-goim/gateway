@@ -10,6 +10,7 @@ import (
 	userv1 "github.com/go-goim/api/user/v1"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/util"
+	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/gateway/internal/dao"
 )
@@ -32,13 +33,13 @@ func GetUserService() *UserService {
 	return userService
 }
 
-func (s *UserService) QueryUserInfo(ctx context.Context, req *userv1.QueryUserRequest) (*userv1.User, error) {
+func (s *UserService) QueryUserInfo(ctx context.Context, req *dto.QueryUserRequest) (*dto.User, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
 
-	rsp, err := userv1.NewUserServiceClient(cc).QueryUser(ctx, req)
+	rsp, err := userv1.NewUserServiceClient(cc).QueryUser(ctx, req.ToPb())
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +48,11 @@ func (s *UserService) QueryUserInfo(ctx context.Context, req *userv1.QueryUserRe
 		return nil, rsp.GetResponse()
 	}
 
-	return rsp.GetUser().ToUser(), nil
+	return dto.UserFromPb(rsp.GetUser()), nil
 }
 
 // Login check user login status and return user info
-func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (*userv1.User, error) {
+func (s *UserService) Login(ctx context.Context, req *dto.UserLoginRequest) (*dto.User, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
@@ -59,10 +60,10 @@ func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (
 
 	var queryReq = &userv1.QueryUserRequest{}
 	switch {
-	case req.GetEmail() != "":
-		queryReq.User = &userv1.QueryUserRequest_Email{Email: req.GetEmail()}
-	case req.GetPhone() != "":
-		queryReq.User = &userv1.QueryUserRequest_Phone{Phone: req.GetPhone()}
+	case req.Email != nil:
+		queryReq.Field = &userv1.QueryUserRequest_Email{Email: *req.Email}
+	case req.Phone != nil:
+		queryReq.Field = &userv1.QueryUserRequest_Phone{Phone: *req.Phone}
 	default:
 		return nil, fmt.Errorf("invalid user login request")
 	}
@@ -86,7 +87,7 @@ func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (
 
 	user := rsp.GetUser()
 
-	if user.GetPassword() != util.HashString(req.GetPassword()) {
+	if user.GetPassword() != util.HashString(req.Password) {
 		return nil, responsepb.Code_InvalidUsernameOrPassword.BaseResponse()
 	}
 
@@ -109,18 +110,18 @@ func (s *UserService) Login(ctx context.Context, req *userv1.UserLoginRequest) (
 		user.PushServerIp = &agentIP
 	}
 
-	return user.ToUser(), nil
+	return dto.UserFromPb(user), nil
 }
 
 // Register register user.
-func (s *UserService) Register(ctx context.Context, req *userv1.CreateUserRequest) (*userv1.User, error) {
+func (s *UserService) Register(ctx context.Context, req *dto.CreateUserRequest) (*dto.User, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
 
 	// do check user exist and create.
-	rsp, err := userv1.NewUserServiceClient(cc).CreateUser(ctx, req)
+	rsp, err := userv1.NewUserServiceClient(cc).CreateUser(ctx, req.ToPb())
 	if err != nil {
 		return nil, err
 	}
@@ -129,18 +130,18 @@ func (s *UserService) Register(ctx context.Context, req *userv1.CreateUserReques
 		return nil, rsp.GetResponse()
 	}
 
-	return rsp.GetUser().ToUser(), nil
+	return dto.UserFromPb(rsp.GetUser()), nil
 }
 
 // UpdateUser update user info.
-func (s *UserService) UpdateUser(ctx context.Context, req *userv1.UpdateUserRequest) (*userv1.User, error) {
+func (s *UserService) UpdateUser(ctx context.Context, req *dto.UpdateUserRequest) (*dto.User, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
 	}
 
 	// do check user exist and update.
-	rsp, err := userv1.NewUserServiceClient(cc).UpdateUser(ctx, req)
+	rsp, err := userv1.NewUserServiceClient(cc).UpdateUser(ctx, req.ToPb())
 	if err != nil {
 		return nil, err
 	}
@@ -149,5 +150,5 @@ func (s *UserService) UpdateUser(ctx context.Context, req *userv1.UpdateUserRequ
 		return nil, rsp.GetResponse()
 	}
 
-	return rsp.GetUser().ToUser(), nil
+	return dto.UserFromPb(rsp.GetUser()), nil
 }

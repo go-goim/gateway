@@ -31,7 +31,7 @@ func GetUserDao() *UserDao {
 }
 
 // GetUserOnlineAgent get user online agent from redis
-func (u *UserDao) GetUserOnlineAgent(ctx context.Context, uid string) (string, error) {
+func (u *UserDao) GetUserOnlineAgent(ctx context.Context, uid int64) (string, error) {
 	key := consts.GetUserOnlineAgentKey(uid)
 	val, err := u.rdb.Get(ctx, key).Result()
 	if err != nil {
