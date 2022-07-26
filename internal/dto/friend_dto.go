@@ -146,3 +146,11 @@ func FriendFromPb(pb *friendv1.Friend) *Friend {
 		UpdatedAt:    pb.UpdatedAt,
 	}
 }
+
+func FriendsFromPb(pb []*friendv1.Friend) []*Friend {
+	var list []*Friend
+	for _, v := range pb {
+		list = append(list, FriendFromPb(v))
+	}
+	return list
+}

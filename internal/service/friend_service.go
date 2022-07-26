@@ -93,7 +93,7 @@ func (s *FriendService) confirmFriendRequest(ctx context.Context, req *dto.Confi
  */
 
 func (s *FriendService) ListUserRelation(ctx context.Context, uid types.ID, paging *web.Paging) (
-	[]*friendpb.Friend, error) {
+	[]*dto.Friend, error) {
 	cc, err := userServiceConnPool.Get()
 	if err != nil {
 		return nil, err
@@ -107,11 +107,11 @@ func (s *FriendService) ListUserRelation(ctx context.Context, uid types.ID, pagi
 		return nil, err
 	}
 
-	if rsp.Response.Success() {
-		return rsp.GetFriendList(), nil
+	if !rsp.Response.Success() {
+		return nil, rsp.GetResponse()
 	}
 
-	return nil, rsp.GetResponse()
+	return dto.FriendsFromPb(rsp.GetFriendList()), nil
 }
 
 func (s *FriendService) BlockFriend(ctx context.Context, req *dto.BaseFriendRequest) error {
