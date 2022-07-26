@@ -1,11 +1,12 @@
 run:
-    skip-dirs:
-        - bin
-        - static
-        - third_party
-        - tests
-    skip-dirs-use-default: true
-    timeout: 5m
+  skip-dirs:
+    - bin
+    - static
+    - third_party
+    - tests
+  skip-dirs-use-default: true
+  timeout: 5m
+  go: '1.18'
 linters:
   disable:
     - gochecknoglobals
@@ -51,12 +52,10 @@ linters:
     - gosec
     - govet
     - ineffassign
-    - interfacer
     - lll
     - misspell
     - prealloc
     - rowserrcheck
-    - scopelint
     - sqlclosecheck
     - staticcheck
     - structcheck
@@ -66,10 +65,10 @@ linters:
     - varcheck
 
 linters-settings:
-    govet:            # 对于linter govet，我们手动开启了它的某些扫描规则
-        check-shadowing: true
-        check-unreachable: true
-        check-rangeloops: true
-        check-copylocks: true
-    lll:
-        line-length: 140
+  govet:            # 对于linter govet，我们手动开启了它的某些扫描规则
+    check-shadowing: true
+    check-unreachable: true
+    check-rangeloops: true
+    check-copylocks: true
+  lll:
+    line-length: 140
