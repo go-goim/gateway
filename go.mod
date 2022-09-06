@@ -8,8 +8,8 @@ require (
 	github.com/go-goim/core v0.0.8
 	github.com/go-kratos/kratos/v2 v2.5.0
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
-	github.com/swaggo/gin-swagger v1.5.2
+	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
+	github.com/swaggo/gin-swagger v1.5.3
 	github.com/swaggo/swag v1.8.4
 )
 
