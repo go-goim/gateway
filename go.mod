@@ -10,7 +10,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/swaggo/gin-swagger v1.5.2
-	github.com/swaggo/swag v1.8.4
+	github.com/swaggo/swag v1.8.6
 )
 
 require (
