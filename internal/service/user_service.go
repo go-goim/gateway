@@ -80,12 +80,11 @@ func (s *UserService) Login(ctx context.Context, req *dto.UserLoginRequest) (*dt
 		return nil, err
 	}
 
-	if err := rsp.GetError().Err(); err != nil {
+	if err = rsp.GetError().Err(); err != nil {
 		return nil, err
 	}
 
 	user := rsp.GetUser()
-
 	if user.GetPassword() != util.HashString(req.Password) {
 		return nil, errors.ErrorCode_InvalidUsernameOrPassword
 	}
