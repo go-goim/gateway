@@ -34,8 +34,8 @@ func (s *FriendService) AddFriend(ctx context.Context, req *dto.BaseFriendReques
 		return nil, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.AddFriendResultFromPb(rsp.GetResult()), nil
@@ -53,8 +53,8 @@ func (s *FriendService) QueryFriendRequestList(ctx context.Context, req *dto.Que
 		return nil, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.FriendRequestListFromPb(rsp.GetFriendRequestList()), nil
@@ -107,8 +107,8 @@ func (s *FriendService) ListUserRelation(ctx context.Context, uid types.ID, pagi
 		return nil, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.FriendsFromPb(rsp.GetFriendList()), nil

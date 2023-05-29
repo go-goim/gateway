@@ -2,11 +2,10 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"time"
 
-	responsepb "github.com/go-goim/api/transport/response"
+	"github.com/go-goim/api/errors"
 	userv1 "github.com/go-goim/api/user/v1"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/util"
@@ -44,8 +43,8 @@ func (s *UserService) QueryUserInfo(ctx context.Context, req *dto.QueryUserReque
 		return nil, err
 	}
 
-	if !rsp.GetResponse().Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.UserFromPb(rsp.GetUser()), nil
@@ -65,7 +64,7 @@ func (s *UserService) Login(ctx context.Context, req *dto.UserLoginRequest) (*dt
 	case req.Phone != nil:
 		queryReq.Field = &userv1.QueryUserRequest_Phone{Phone: *req.Phone}
 	default:
-		return nil, fmt.Errorf("invalid user login request")
+		return nil, errors.ErrorCode_InvalidParams.WithMessage("invalid user login request")
 	}
 
 	ddl, ok := ctx.Deadline()
@@ -81,14 +80,14 @@ func (s *UserService) Login(ctx context.Context, req *dto.UserLoginRequest) (*dt
 		return nil, err
 	}
 
-	if !rsp.GetResponse().Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	user := rsp.GetUser()
 
 	if user.GetPassword() != util.HashString(req.Password) {
-		return nil, responsepb.Code_InvalidUsernameOrPassword.BaseResponse()
+		return nil, errors.ErrorCode_InvalidUsernameOrPassword
 	}
 
 	agentIP, err := s.userDao.GetUserOnlineAgent(ctx, user.GetUid())
@@ -126,8 +125,8 @@ func (s *UserService) Register(ctx context.Context, req *dto.CreateUserRequest) 
 		return nil, err
 	}
 
-	if !rsp.GetResponse().Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.UserFromPb(rsp.GetUser()), nil
@@ -146,8 +145,8 @@ func (s *UserService) UpdateUser(ctx context.Context, req *dto.UpdateUserRequest
 		return nil, err
 	}
 
-	if !rsp.GetResponse().Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.UserFromPb(rsp.GetUser()), nil

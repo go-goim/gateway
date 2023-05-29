@@ -73,8 +73,8 @@ func (s *SendMessageService) checkCanSendMsg(ctx context.Context, req *messagev1
 		return "", err
 	}
 
-	if !resp.Response.Success() {
-		return "", resp.Response
+	if err := resp.GetError().Err(); err != nil {
+		return "", err
 	}
 
 	if resp.SessionId == nil || *resp.SessionId == "" {

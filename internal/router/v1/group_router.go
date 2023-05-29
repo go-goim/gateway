@@ -3,7 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 
-	responsepb "github.com/go-goim/api/transport/response"
+	"github.com/go-goim/api/errors"
 	"github.com/go-goim/core/pkg/mid"
 	"github.com/go-goim/core/pkg/router"
 	"github.com/go-goim/core/pkg/types"
@@ -49,7 +49,7 @@ func (r *GroupRouter) Load(router *gin.RouterGroup) {
 func (r *GroupRouter) getGroup(c *gin.Context) {
 	req := &dto.GetGroupRequest{}
 	if err := c.ShouldBindQuery(&req); err != nil {
-		response.ErrorResp(c, err)
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -96,7 +96,7 @@ func (r *GroupRouter) listGroup(c *gin.Context) {
 func (r *GroupRouter) createGroup(c *gin.Context) {
 	var req = &dto.CreateGroupRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -123,7 +123,7 @@ func (r *GroupRouter) createGroup(c *gin.Context) {
 func (r *GroupRouter) updateGroup(c *gin.Context) {
 	var req = &dto.UpdateGroupRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -150,7 +150,7 @@ func (r *GroupRouter) updateGroup(c *gin.Context) {
 func (r *GroupRouter) deleteGroup(c *gin.Context) {
 	var req = &dto.DeleteGroupRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -177,7 +177,7 @@ func (r *GroupRouter) deleteGroup(c *gin.Context) {
 func (r *GroupRouter) addMember(c *gin.Context) {
 	var req = &dto.ChangeGroupMemberRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -206,7 +206,7 @@ func (r *GroupRouter) addMember(c *gin.Context) {
 func (r *GroupRouter) removeMember(c *gin.Context) {
 	var req = &dto.ChangeGroupMemberRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -233,7 +233,7 @@ func (r *GroupRouter) removeMember(c *gin.Context) {
 func (r *GroupRouter) leaveGroup(c *gin.Context) {
 	var req = &dto.ChangeGroupMemberRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 

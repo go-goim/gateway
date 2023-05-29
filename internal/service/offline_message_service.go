@@ -30,8 +30,8 @@ func (s *OfflineMessageService) QueryOfflineMsg(ctx context.Context, req *dto.Qu
 		return nil, 0, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, 0, rsp.Response
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, 0, err
 	}
 
 	return dto.MessagesFromPb(rsp.Messages), rsp.GetTotal(), nil

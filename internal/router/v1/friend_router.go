@@ -3,13 +3,12 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 
-	responsepb "github.com/go-goim/api/transport/response"
+	"github.com/go-goim/api/errors"
 	"github.com/go-goim/core/pkg/log"
-	"github.com/go-goim/gateway/internal/dto"
-
 	"github.com/go-goim/core/pkg/mid"
 	"github.com/go-goim/core/pkg/router"
 	"github.com/go-goim/core/pkg/web/response"
+	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/gateway/internal/service"
 )
@@ -50,7 +49,7 @@ func (r *FriendRouter) listRelation(c *gin.Context) {
 	list, err := service.GetFriendService().ListUserRelation(mid.GetContext(c),
 		mid.GetUID(c), mid.GetPaging(c))
 	if err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -71,7 +70,7 @@ func (r *FriendRouter) listRelation(c *gin.Context) {
 func (r *FriendRouter) listFriendRequest(c *gin.Context) {
 	req := &dto.QueryFriendRequestListRequest{}
 	if err := c.ShouldBindQuery(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -99,7 +98,7 @@ func (r *FriendRouter) listFriendRequest(c *gin.Context) {
 func (r *FriendRouter) addFriend(c *gin.Context) {
 	req := &dto.BaseFriendRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -127,7 +126,7 @@ func (r *FriendRouter) addFriend(c *gin.Context) {
 func (r *FriendRouter) deleteFriend(c *gin.Context) {
 	req := &dto.BaseFriendRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -154,7 +153,7 @@ func (r *FriendRouter) deleteFriend(c *gin.Context) {
 func (r *FriendRouter) acceptFriend(c *gin.Context) {
 	req := &dto.ConfirmFriendRequestRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -181,7 +180,7 @@ func (r *FriendRouter) acceptFriend(c *gin.Context) {
 func (r *FriendRouter) rejectFriend(c *gin.Context) {
 	req := &dto.ConfirmFriendRequestRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -208,7 +207,7 @@ func (r *FriendRouter) rejectFriend(c *gin.Context) {
 func (r *FriendRouter) blockFriend(c *gin.Context) {
 	req := &dto.BaseFriendRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -235,7 +234,7 @@ func (r *FriendRouter) blockFriend(c *gin.Context) {
 func (r *FriendRouter) unblockFriend(c *gin.Context) {
 	req := &dto.BaseFriendRequest{}
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 

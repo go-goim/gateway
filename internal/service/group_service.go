@@ -31,8 +31,8 @@ func (s *GroupService) GetGroup(ctx context.Context, req *dto.GetGroupRequest) (
 		return nil, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.GroupFromPb(rsp.GetGroup()), nil
@@ -49,8 +49,8 @@ func (s *GroupService) UpdateGroup(ctx context.Context, req *dto.UpdateGroupRequ
 		return nil, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.GroupFromPb(rsp.GetGroup()), nil
@@ -67,8 +67,8 @@ func (s *GroupService) CreateGroup(ctx context.Context, req *dto.CreateGroupRequ
 		return nil, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.GroupFromPb(rsp.GetGroup()), nil
@@ -89,8 +89,8 @@ func (s *GroupService) ListGroup(ctx context.Context, uid types.ID, paging *web.
 		return nil, err
 	}
 
-	if !rsp.Response.Success() {
-		return nil, rsp.GetResponse()
+	if err := rsp.GetError().Err(); err != nil {
+		return nil, err
 	}
 
 	return dto.GroupsFromPb(rsp.GetGroups()), nil
@@ -125,8 +125,8 @@ func (s *GroupService) AddGroupMember(ctx context.Context, req *dto.ChangeGroupM
 		return 0, err
 	}
 
-	if !rsp.Response.Success() {
-		return 0, rsp.Response
+	if err := rsp.GetError().Err(); err != nil {
+		return 0, err
 	}
 
 	return int(rsp.GetCount()), nil
@@ -143,8 +143,8 @@ func (s *GroupService) RemoveGroupMember(ctx context.Context, req *dto.ChangeGro
 		return 0, err
 	}
 
-	if !rsp.Response.Success() {
-		return 0, rsp.Response
+	if err := rsp.GetError().Err(); err != nil {
+		return 0, err
 	}
 
 	return int(rsp.GetCount()), nil
