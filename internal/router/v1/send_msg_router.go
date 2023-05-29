@@ -3,7 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 
-	responsepb "github.com/go-goim/api/transport/response"
+	"github.com/go-goim/api/errors"
 	"github.com/go-goim/core/pkg/mid"
 	"github.com/go-goim/core/pkg/router"
 	"github.com/go-goim/core/pkg/web/response"
@@ -44,7 +44,7 @@ func (r *MsgRouter) Load(g *gin.RouterGroup) {
 func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
 	req := new(dto.SendMessageReq)
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
@@ -70,7 +70,7 @@ func (r *MsgRouter) handleSendSingleUserMsg(c *gin.Context) {
 func (r *MsgRouter) handleSendBroadcastMsg(c *gin.Context) {
 	req := new(dto.SendMessageReq)
 	if err := c.ShouldBindJSON(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 

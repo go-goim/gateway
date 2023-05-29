@@ -3,7 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 
-	responsepb "github.com/go-goim/api/transport/response"
+	"github.com/go-goim/api/errors"
 	"github.com/go-goim/gateway/internal/dto"
 
 	"github.com/go-goim/core/pkg/mid"
@@ -43,7 +43,7 @@ func (r *OfflineMessageRouter) Load(g *gin.RouterGroup) {
 func (r *OfflineMessageRouter) handleQueryOfflineMessage(c *gin.Context) {
 	req := new(dto.QueryOfflineMessageReq)
 	if err := c.ShouldBindQuery(req); err != nil {
-		response.ErrorResp(c, responsepb.Code_InvalidParams.BaseResponseWithError(err))
+		response.ErrorResp(c, errors.ErrorCode_InvalidParams.WithError(err))
 		return
 	}
 
